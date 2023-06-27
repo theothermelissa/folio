@@ -4,15 +4,15 @@ import Dashboard from "supertokens-node/recipe/dashboard";
 import { appInfo } from "./appInfo";
 import { AuthConfig } from "../interfaces";
 
-const { CORE_CONNECTION_URI, CORE_API_KEY } = process.env;
+const { SUPERTOKENS_URI, SUPERTOKENS_API_KEY } = process.env;
 
 export let backendConfig = (): AuthConfig => {
   return {
     framework: "express",
     supertokens: {
       // this is the location of the SuperTokens core.
-      connectionURI: CORE_CONNECTION_URI,
-      apiKey: "bTEC2oFEClAAEr41Mx3Ge1Q=LVxgpM",
+      connectionURI: SUPERTOKENS_URI,
+      apiKey: SUPERTOKENS_API_KEY,
     },
     appInfo,
     // recipeList contains all the modules that you want to
