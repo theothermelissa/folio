@@ -1,11 +1,9 @@
 import React from "react";
-import SessionReact from "supertokens-auth-react/recipe/session";
-import ProtectedPage from "../components/demo";
 
-export default function Home(props) {
+export default function Home() {
   return (
-    <SessionReact.SessionAuth>
-      <ProtectedPage />
-    </SessionReact.SessionAuth>
+    <div>
+      This is the homepage. You can access this page without logging in.
+    </div>
   );
 }
