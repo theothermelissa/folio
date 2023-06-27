@@ -1,3 +1,4 @@
+import FeedLayout from "../../../../components/feed-layout";
 import Protected from "../../../../components/protected-page";
 
 const Admin = () => {
@@ -7,4 +8,9 @@ const Admin = () => {
     </Protected>
   );
 };
+
+Admin.getLayout = function getLayout(page: React.ReactElement) {
+  return <FeedLayout>{page}</FeedLayout>;
+};
+
 export default Admin;

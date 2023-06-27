@@ -4,19 +4,12 @@ import { Flex } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import Page from "./page-layout";
 import { NavBar } from "./navbar";
-// import { useAtom } from "jotai";
 import { NAVBAR_HEIGHT } from "../constants";
 import { useRouter } from "next/router";
-// import * as atoms from "../atoms/user-atoms";
-// import { useEffect } from "react";
-// import { NextResponse } from "next/server";
 
 export const dynamicParams = true;
 
 type LayoutProps = {
-  // params: {
-  //   subdomain: string;
-  // };
   children: React.ReactNode;
 };
 
@@ -28,8 +21,6 @@ const View = styled(Flex)`
 
 const FeedLayout = (props: LayoutProps) => {
   const { children } = props;
-  //   const pathname = usePathname();
-  //   const params = useParams();
   const router = useRouter();
 
   const subdomain = router.query.subdomain as string;

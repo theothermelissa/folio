@@ -8,12 +8,14 @@ import { ChakraProvider } from "@chakra-ui/react";
 // TODO mpm: look @ CacheProvider from chakra next.js -- do you need it?
 
 import theme from "../styles/theme";
+import { NextPageWithLayout } from "../types";
 
 if (typeof window !== "undefined") {
   SuperTokensReact.init(SuperTokensConfig.frontendConfig());
 }
 
 function MyApp({ Component, pageProps }): JSX.Element {
+  // from supertokens docs
   useEffect(() => {
     async function doRefresh() {
       if (pageProps.fromSupertokens === "needs-refresh") {
@@ -31,10 +33,12 @@ function MyApp({ Component, pageProps }): JSX.Element {
     return null;
   }
 
+  const getLayout = Component.getLayout ?? ((page: NextPageWithLayout) => page);
+
   return (
     <SuperTokensWrapper>
       <ChakraProvider theme={theme}>
-        <Component {...pageProps} />
+        {getLayout(<Component {...pageProps} />)}
       </ChakraProvider>
     </SuperTokensWrapper>
   );

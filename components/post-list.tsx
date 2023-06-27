@@ -1,9 +1,11 @@
-import type { GetServerSideProps, GetStaticPaths } from "next";
+// import type { GetServerSideProps, GetStaticPaths } from "next";
 import useSWR from "swr";
 import { Post } from "../types";
 import { Box, Flex } from "@chakra-ui/react";
 import { PostCard } from "./post-card";
 import { DeletePost } from "./post-controls";
+
+const url = `/api/posts`;
 
 // export const getServerSideProps: GetServerSideProps<{
 //   posts: Post[];
@@ -21,16 +23,11 @@ type FetcherProps = {
   subdomain: string;
 };
 
-const fetcher = async (props: FetcherProps) => {
-  const { url, subdomain } = props;
+const fetcher = async ({ url, subdomain }) => {
   //   console.log("Props in fetcher: ", url, ", ", subdomain);
   const res = await fetch(url, { method: "GET", headers: { subdomain } });
   //   console.log("res: ", res);
   return res.json();
-};
-
-type PostListProps = {
-  subdomain: string;
 };
 
 type ItemProps = {
@@ -54,8 +51,6 @@ const PostItem = (props: ItemProps) => {
 };
 
 const PostList = ({ subdomain }) => {
-  const url = `/api/posts`;
-
   const { data, error, isLoading } = useSWR(
     url,
     async () => await fetcher({ url, subdomain })
@@ -66,7 +61,10 @@ const PostList = ({ subdomain }) => {
   }
 
   if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Front-end Error: {JSON.stringify(error)}</div>;
+  if (error)
+    return (
+      <div>Unfortunate error. Here's what we got: {JSON.stringify(error)}</div>
+    );
   return (
     <div>
       {data && data.posts && (

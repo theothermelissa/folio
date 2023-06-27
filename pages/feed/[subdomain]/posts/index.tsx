@@ -10,17 +10,19 @@ const Posts = () => {
   const subdomain = router.query.subdomain as string;
 
   return (
-    <FeedLayout>
-      <Flex flexDirection="column">
-        {Boolean(subdomain) ? (
-          <PostList subdomain={subdomain} />
-        ) : (
-          <div>No feed here 🤷🏻‍♀️</div>
-        )}
-        <CreatePost />
-      </Flex>
-    </FeedLayout>
+    <Flex flexDirection="column" width="100%">
+      {Boolean(subdomain) ? (
+        <PostList subdomain={subdomain} />
+      ) : (
+        <div>No feed here 🤷🏻‍♀️</div>
+      )}
+      <CreatePost />
+    </Flex>
   );
+};
+
+Posts.getLayout = function getLayout(page: React.ReactElement) {
+  return <FeedLayout>{page}</FeedLayout>;
 };
 
 export default Posts;
