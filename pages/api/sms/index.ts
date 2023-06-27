@@ -1,9 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next/types";
-import { Post } from "../../../types";
-
-const prisma = new PrismaClient({ log: ["query"] });
+import prisma from "../../../lib/prisma";
 
 // export async function GET(request: NextRequest) {
 //   console.log("making GET request via sms: ", request.body);
