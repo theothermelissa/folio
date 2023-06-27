@@ -3,7 +3,7 @@ const port = process.env.APP_PORT || 3000;
 const apiBasePath = "/api/auth/";
 
 export const websiteDomain =
-  process.env.APP_URL ||
+  process.env.BASE_URL_PATH ||
   process.env.NEXT_PUBLIC_APP_URL ||
   `http://localhost:${port}`;
 
