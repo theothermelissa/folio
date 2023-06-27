@@ -3,8 +3,6 @@ import styled from "@emotion/styled";
 import Link from "next/link";
 import React from "react";
 
-const { NEXT_PUBLIC_BASE_PROTOCOL, NEXT_PUBLIC_BASE_URL_PATH } = process.env;
-
 const Wrapper = styled(Flex)`
   height: 100vh;
   width: 100%;

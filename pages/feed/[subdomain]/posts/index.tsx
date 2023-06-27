@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import PostList from "../../../../components/post-list";
 import FeedLayout from "../../../../components/feed-layout";
 import { Flex } from "@chakra-ui/react";
-import { CreatePost } from "../../../../components/post-controls";
+// import { CreatePost } from "../../../../components/post-controls";
 
 const Posts = () => {
   // router allows access to subdomain like this:
@@ -16,7 +16,7 @@ const Posts = () => {
       ) : (
         <div>No feed here 🤷🏻‍♀️</div>
       )}
-      <CreatePost />
+      {/* <CreatePost /> */}
     </Flex>
   );
 };

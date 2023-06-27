@@ -43,7 +43,7 @@ const PostItem = (props: ItemProps) => {
 
   return (
     <Flex display="block" key={id} gap={6}>
-      <PostCard name={title} imageUrls={media} preview={preview}>
+      <PostCard id={id} name={title} imageUrls={media} preview={preview}>
         <DeletePost id={id} />
       </PostCard>
     </Flex>

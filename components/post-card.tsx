@@ -11,10 +11,13 @@ import {
   Image,
 } from "@chakra-ui/react";
 import styled from "@emotion/styled";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 type PostCardProps = {
   children: React.ReactNode;
   name: string;
+  id: number;
   preview: string;
   imageUrls: string[];
 };
@@ -43,46 +46,47 @@ const PostInfo = styled(Stack)`
 `;
 
 export const PostCard = (props: PostCardProps) => {
-  const { children, name, imageUrls, preview } = props;
+  const { children, id, name, imageUrls, preview } = props;
+
+  const router = useRouter();
 
   return (
-    <StyledCard maxW="sm" borderRadius={"sm"}>
-      <CardBody style={{ padding: "15px" }}>
-        {imageUrls.length > 0 ? (
-          <StyledImage
-            borderRadius={"sm"}
-            src={imageUrls[0]}
-            alt="Post image"
-          />
-        ) : (
-          // TODO: image carousel
-          // <>
-          //   {imageUrls.map((url) => (
-          //     <Image key={url} src={url} alt="foo" borderRadius="lg" />
-          //   ))}
-          // </>
-          <FakePic />
-        )}
-        <PostInfo mt="6" spacing="1">
-          {name.length > 0 && <Heading size="md">{name}</Heading>}
-          <Text>{preview}</Text>
-          {/* <Text color="blue.600" fontSize="2xl">
+    <Link
+      href={{
+        pathname: "/posts/[id]",
+        query: { id: id },
+      }}
+    >
+      <StyledCard value={id} maxW="sm" borderRadius={"sm"}>
+        <CardBody style={{ padding: "15px" }}>
+          {imageUrls.length > 0 && (
+            <StyledImage
+              borderRadius={"sm"}
+              src={imageUrls[0]}
+              alt="Post image"
+            />
+          )}
+          <PostInfo mt="6" spacing="1">
+            {name.length > 0 && <Heading size="md">{name}</Heading>}
+            <Text>{preview}</Text>
+            {/* <Text color="blue.600" fontSize="2xl">
               tags
             </Text> */}
-        </PostInfo>
-      </CardBody>
-      {/* <StyledDivider /> */}
-      {/* <CardFooter> */}
-      {/* <ButtonGroup spacing="2">
+          </PostInfo>
+        </CardBody>
+        {/* <StyledDivider /> */}
+        {/* <CardFooter> */}
+        {/* <ButtonGroup spacing="2">
             <Button variant="solid" colorScheme="blue">
-              Read More
-            </Button> */}
-      {/* <Button variant="ghost" colorScheme="blue">
+            Read More
+          </Button> */}
+        {/* <Button variant="ghost" colorScheme="blue">
               Add to cart
             </Button> */}
-      {/* {children} */}
-      {/* </ButtonGroup> */}
-      {/* </CardFooter> */}
-    </StyledCard>
+        {/* {children} */}
+        {/* </ButtonGroup> */}
+        {/* </CardFooter> */}
+      </StyledCard>
+    </Link>
   );
 };

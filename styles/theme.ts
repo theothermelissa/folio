@@ -5,7 +5,7 @@ const theme = {
     global: {
       body: {
         color: "default",
-        bg: "whitesmoke",
+        bg: "ghostwhite",
       },
     },
   },

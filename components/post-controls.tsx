@@ -34,7 +34,7 @@ export const CreatePost = () => {
   return (
     <form>
       <input type="text" onChange={handleChange}></input>
-      <button onClick={handleSubmit}>Create Post</button>
+      {/* <button onClick={handleSubmit}>Create Post</button> */}
     </form>
   );
 };
