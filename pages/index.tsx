@@ -16,23 +16,15 @@ const Wrapper = styled(Flex)`
 `;
 
 export async function getStaticProps() {
-  const protocol = process.env.NEXT_PUBLIC_BASE_PROTOCOL;
-  const urlPath = process.env.NEXT_PUBLIC_BASE_URL_PATH;
+  const protocol = process.env.NEXT_PUBLIC_BASE_PROTOCOL || null;
+  const urlPath = process.env.NEXT_PUBLIC_BASE_URL_PATH || null;
   return { props: { protocol, urlPath } };
-  // ...
 }
 
 export default function Home({ protocol, urlPath }) {
   console.log("protocol: ", protocol);
   console.log("urlPath: ", urlPath);
   const path = `${protocol}demo.${urlPath}/posts`;
-
-  // React.useEffect(() => {
-  //   if (NEXT_PUBLIC_BASE_PROTOCOL && NEXT_PUBLIC_BASE_URL_PATH) {
-  //     console.log("has variables");
-  //     setPath(getPath());
-  //   }
-  // }, [NEXT_PUBLIC_BASE_PROTOCOL, NEXT_PUBLIC_BASE_URL_PATH]);
 
   return (
     <Wrapper>

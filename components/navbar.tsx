@@ -38,7 +38,7 @@ const StyledTab = styled.div<TabProps>`
 `;
 
 // TODO mpm: rewrite this to use Chakra color theme
-// TODO mpm: ... define color theme 🤦🏻‍♀️
+// TODO mpm: ... er, define color theme 🤦🏻‍♀️
 export const NavBar = () => {
   const pathname = usePathname();
   const params = useParams();
