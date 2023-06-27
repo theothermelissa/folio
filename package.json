@@ -1,9 +1,10 @@
 {
     "private": true,
     "scripts": {
-        "dev": "next dev",
-        "build": "next build",
-        "start": "next start"
+        "dev": "prisma generate && next dev",
+        "build": "prisma generate && prisma db push && next build",
+        "start": "next start",
+        "gen:theme-typings": "chakra-cli tokens app/theme.ts"
     },
     "dependencies": {
         "@chakra-ui/react": "^2.7.1",
