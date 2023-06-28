@@ -1,22 +1,10 @@
 // import type { GetServerSideProps, GetStaticPaths } from "next";
-import useSWR from "swr";
+import useSWR, { SWRConfig } from "swr";
 import { Post } from "../types";
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, Skeleton } from "@chakra-ui/react";
 import { PostCard } from "./post-card";
 import { DeletePost } from "./post-controls";
-
-const url = `/api/posts`;
-
-// export const getServerSideProps: GetServerSideProps<{
-//   posts: Post[];
-// }> = async (context) => {
-//   const subdomain = context.params?.subdomain;
-
-//   const response = await fetch(`http://localhost:3000/api/posts`);
-//   const data = await response.json();
-
-//   return { props: { posts: data } };
-// };
+import { GetStaticPropsContext } from "next";
 
 type FetcherProps = {
   url: string;
@@ -24,9 +12,7 @@ type FetcherProps = {
 };
 
 const fetcher = async ({ url, subdomain }) => {
-  //   console.log("Props in fetcher: ", url, ", ", subdomain);
   const res = await fetch(url, { method: "GET", headers: { subdomain } });
-  //   console.log("res: ", res);
   return res.json();
 };
 
@@ -50,35 +36,39 @@ const PostItem = (props: ItemProps) => {
   );
 };
 
-const PostList = ({ subdomain }) => {
+type PostListProps = {
+  subdomain: string;
+};
+
+const PostList = (props: PostListProps) => {
+  const { subdomain } = props;
   const { data, error, isLoading } = useSWR(
-    url,
-    async () => await fetcher({ url, subdomain })
+    `/api/posts`,
+    async () => await fetcher({ url: `/api/posts`, subdomain })
   );
 
   if (!subdomain) {
     return <div>No feed</div>;
   }
 
-  if (isLoading) return <div>Loading...</div>;
   if (error)
     return (
       <div>Unfortunate error. Here's what we got: {JSON.stringify(error)}</div>
     );
   return (
     <div>
-      {data && data.posts && (
-        <Box
-          padding={4}
-          w="100%"
-          mx="auto"
-          sx={{ columnCount: [1, 2, 3, 4, 5], columnGap: "8px" }}
-        >
-          {data.posts.map((p: Post) => (
-            <PostItem key={p.id} p={p} />
-          ))}
-        </Box>
-      )}
+      <Box
+        padding={4}
+        w="100%"
+        mx="auto"
+        sx={{ columnCount: [1, 2, 3, 4, 5], columnGap: "8px" }}
+      >
+        <Skeleton isLoaded={!isLoading}>
+          {data &&
+            data.posts &&
+            data.posts.map((p: Post) => <PostItem key={p.id} p={p} />)}
+        </Skeleton>
+      </Box>
     </div>
   );
 };

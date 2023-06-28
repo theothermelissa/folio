@@ -8,29 +8,30 @@ export default async function handler(
   response: NextApiResponse
 ) {
   if (request.method === "GET") {
+    // TODO mpm: add handling for getting all/multiple feed posts
     const subdomain = request.headers["subdomain"];
-    // console.log("subdomain: ", subdomain);
-    try {
-      const posts = await prisma?.feed.findUnique({
-        where: {
-          subdomain: subdomain.toString(),
-        },
-        include: {
-          posts: true,
-        },
-      });
-      // const posts = await prisma?.feed.findUnique({
-      //   where: {
-      //     subdomain: "theothermelissa",
-      //   },
-      //   include: {
-      //     posts: true,
-      //   },
-      // });
-      // console.log("posts: ", posts);
-      response.status(200).json(posts);
-    } catch (error) {
-      response.status(500).json({ error: error.message });
+    console.log("subdomain: ", subdomain);
+    if (subdomain) {
+      try {
+        const posts = await prisma?.feed.findUnique({
+          where: {
+            subdomain: subdomain.toString(),
+          },
+          include: {
+            posts: true,
+          },
+        });
+        response.status(200).json(posts);
+      } catch (error) {
+        response.status(500).json({ error: error.message });
+      }
+    } else {
+      try {
+        const posts = await prisma?.post.findMany();
+        response.status(200).json(posts);
+      } catch (error) {
+        response.status(500).json({ error: error.message });
+      }
     }
   }
 }

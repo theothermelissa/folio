@@ -1,21 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next/types";
 import prisma from "../../../lib/prisma";
 
-// export async function GET(request: NextRequest) {
-//   console.log("making GET request via sms: ", request.body);
-//   return "here is some data";
-// }
+const { NEXT_PUBLIC_BASE_URL_PATH, NEXT_PUBLIC_BASE_PROTOCOL } = process.env;
 
-// const parseJSON = (params: string): Object => {
-//   var searchParams = new URLSearchParams(params);
-//   return Object.fromEntries([...searchParams]);
-// };
-
-// export async function POST(request: Request) {
-//   const res = await request.text();
-//   const parsed = parseJSON(res);
-//   return NextResponse.json(parsed);
-// }
+type FeedProps = {
+  to: string;
+  from: string;
+};
 
 // check "from" number against database
 // if they are a user already, add the post to their posts
@@ -24,122 +15,139 @@ import prisma from "../../../lib/prisma";
 //     - a new temporary feed page for them
 //     - and add this post as the first of their posts
 
-type FeedProps = {
-  to: string;
-  from: string;
-};
-
 // find the feed with this unique combination of from and to numbers
 // if the feed exists, post this message to it
 // if the feed does not exist, create it and post this message to it
 
-function generateRandomFeedName() {
-  const adjectives = [
-    "ajar",
-    "rare",
-    "wry",
-    "bad",
-    "big",
-    "wide",
-    "good",
-    "ill",
-    "near",
-    "silly",
-    "mad",
-    "weak",
-    "six",
-    "low",
-    "luxe",
-    "bent",
-    "one",
-    "meek",
-    "glib",
-    "even",
-    "hard",
-    "sad",
-    "rich",
-    "hot",
-    "keen",
-    "drab",
-    "soft",
-    "rude",
-    "huge",
-    "mute",
-    "used",
-    "open",
-    "fair",
-    "two",
-    "icy",
-    "five",
-    "high",
-    "cool",
-    "half",
-    "ten",
-    "real",
-    "able",
-    "flat",
-    "random",
-    "sassy",
-    "artsy",
-    "nine",
-    "new",
-    "sick",
-    "dry",
-  ];
-  const nouns = [
-    "cub",
-    "cave",
-    "cows",
-    "crown",
-    "cable",
-    "crate",
-    "cough",
-    "ratio",
-    "power",
-    "music",
-    "salad",
-    "bread",
-    "night",
-    "cheek",
-    "river",
-    "drama",
-    "bonus",
-    "honey",
-    "virus",
-    "shirt",
-    "phone",
-    "dresser",
-    "buyer",
-    "topic",
-    "owner",
-    "uncle",
-    "tooth",
-    "video",
-    "event",
-    "basis",
-    "entry",
-    "brood",
-    "media",
-    "truth",
-    "pizza",
-    "fox",
-    "heart",
-    "story",
-    "actor",
-    "queen",
-    "depth",
-    "movie",
-    "guest",
-    "world",
-    "child",
-    "thing",
-    "paper",
-  ];
-  const generated = `${
+const adjectives = [
+  "ajar",
+  "rare",
+  "wry",
+  "bad",
+  "big",
+  "wide",
+  "good",
+  "ill",
+  "near",
+  "silly",
+  "mad",
+  "weak",
+  "six",
+  "low",
+  "luxe",
+  "bent",
+  "one",
+  "meek",
+  "glib",
+  "even",
+  "hard",
+  "sad",
+  "rich",
+  "hot",
+  "keen",
+  "drab",
+  "soft",
+  "rude",
+  "huge",
+  "mute",
+  "used",
+  "open",
+  "fair",
+  "two",
+  "icy",
+  "five",
+  "high",
+  "cool",
+  "half",
+  "ten",
+  "real",
+  "able",
+  "flat",
+  "random",
+  "sassy",
+  "artsy",
+  "nine",
+  "new",
+  "sick",
+  "dry",
+];
+const nouns = [
+  "cub",
+  "cave",
+  "cows",
+  "crown",
+  "cable",
+  "crate",
+  "cough",
+  "ratio",
+  "power",
+  "music",
+  "salad",
+  "bread",
+  "night",
+  "cheek",
+  "river",
+  "drama",
+  "bonus",
+  "honey",
+  "virus",
+  "shirt",
+  "phone",
+  "dresser",
+  "buyer",
+  "topic",
+  "owner",
+  "uncle",
+  "tooth",
+  "video",
+  "event",
+  "basis",
+  "entry",
+  "brood",
+  "media",
+  "truth",
+  "pizza",
+  "fox",
+  "heart",
+  "story",
+  "actor",
+  "queen",
+  "depth",
+  "movie",
+  "guest",
+  "world",
+  "child",
+  "thing",
+  "paper",
+];
+
+async function getUniqueFeedName() {
+  const existingFeeds = await prisma?.feed.findMany({
+    select: {
+      subdomain: true,
+    },
+  });
+  const existingNames = existingFeeds?.map((feed) => feed.subdomain);
+  return generateNewFeedName(existingNames);
+}
+
+function generateNewFeedName(list: string[]) {
+  console.log("list: ", list);
+  let suggestedName = `${
     adjectives[Math.floor(Math.random() * adjectives.length)]
   }-${nouns[Math.floor(Math.random() * nouns.length)]}`;
-  return generated;
+  console.log("suggesting: ", suggestedName);
+  if (!list.includes(suggestedName)) {
+    console.log("That works!");
+    return suggestedName;
+  } else {
+    console.log("Not unique; regenerating");
+    generateNewFeedName(list);
+  }
 }
+
+let uniqueFeedName = "";
+let newAccount = false;
 
 async function getUserOnFeed(props: FeedProps) {
   const { to, from } = props;
@@ -148,10 +156,17 @@ async function getUserOnFeed(props: FeedProps) {
       feedPhone: to,
       userPhone: from,
     },
+    include: {
+      feed: true,
+    },
   });
   if (record) {
+    uniqueFeedName = record.feed.subdomain;
     return record;
   } else {
+    let feedName = await getUniqueFeedName();
+    newAccount = true;
+    console.log("creating new feedName: ", feedName);
     const newRecord = await prisma?.usersOnFeeds.create({
       data: {
         feedPhone: to,
@@ -163,7 +178,7 @@ async function getUserOnFeed(props: FeedProps) {
         },
         feed: {
           create: {
-            subdomain: generateRandomFeedName(),
+            subdomain: feedName,
             owner: {
               connectOrCreate: {
                 where: {
@@ -178,6 +193,7 @@ async function getUserOnFeed(props: FeedProps) {
         },
       },
     });
+    uniqueFeedName = feedName;
     return newRecord;
   }
   // .then((userOnFeed) => {
@@ -247,7 +263,7 @@ async function createPost(props: PostProps) {
         },
       },
     });
-    console.log("New post visible at feed id: ", userOnFeed.feedId);
+    console.log("Feed: ", uniqueFeedName, " isNew: ", newAccount);
   } catch (error) {
     console.error("error creating post: ", error);
   }
@@ -316,9 +332,10 @@ export default async function handler(
       userOnFeedId: userOnFeed.id,
       message: { title, content, media },
     });
-    response
-      .status(200)
-      .json({ message: `This user's feed id: ${userOnFeed.feedId}` });
+    response.status(200).json({
+      feedUrl: `${NEXT_PUBLIC_BASE_PROTOCOL}${uniqueFeedName}.${NEXT_PUBLIC_BASE_URL_PATH}/posts`,
+      isNewFeed: newAccount,
+    });
   } catch (error) {
     console.error("Unexpected error: ", error);
     response.status(500).json({ message: error });
