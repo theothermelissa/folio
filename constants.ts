@@ -32,11 +32,6 @@ export const NAV_LINK_INDICES = [
     path: CONTACT_PATH,
     tabIndex: 4,
   },
-  {
-    name: "Admin",
-    path: ADMIN_PATH,
-    tabIndex: 5,
-  },
 ];
 
 export const NAVBAR_HEIGHT = 62;

@@ -311,10 +311,18 @@ export default async function handler(
 
   const userOnFeed = await getUserOnFeed({ to, from: author });
 
-  createPost({
-    userOnFeedId: userOnFeed.id,
-    message: { title, content, media },
-  });
+  try {
+    createPost({
+      userOnFeedId: userOnFeed.id,
+      message: { title, content, media },
+    });
+    response
+      .status(200)
+      .json({ message: `This user's feed id: ${userOnFeed.feedId}` });
+  } catch (error) {
+    console.error("Unexpected error: ", error);
+    response.status(500).json({ message: error });
+  }
 
   //   try {
   //     await prisma?.post.create({
@@ -327,7 +335,5 @@ export default async function handler(
   //     });
   //     response.status(200).json({ message: "Successfully posted. I think." });
   //   } catch (error) {
-  //     console.error("Unexpected error: ", error);
-  //     response.status(500).json({ message: error });
   //   }
 }

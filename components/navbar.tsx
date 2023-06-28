@@ -3,11 +3,11 @@
 // import { Tabs, TabList, Tab, Flex, Container, Button } from "@chakra-ui/react";
 // import { useAtom, useSetAtom } from "jotai";
 // import { activePath, activeTabIndex } from "../atoms/nav-atoms";
-import { NAVBAR_HEIGHT, NAV_LINK_INDICES } from "../constants";
+import { ADMIN_PATH, NAVBAR_HEIGHT, NAV_LINK_INDICES } from "../constants";
 import styled from "@emotion/styled";
 import React from "react";
 import Link from "next/link";
-import { SettingsIcon } from "@chakra-ui/icons";
+import { HamburgerIcon, SettingsIcon } from "@chakra-ui/icons";
 import { Heading, IconButton, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 
@@ -42,10 +42,10 @@ const PageName = styled(Heading)`
 
 const SettingsMenu = styled.div`
   display: flex;
+  height: 100%;
   flex: 1;
   justify-content: flex-end;
-  align-items: center;
-  margin: 5px;
+  align-items: flex-start;
 `;
 
 const NavTabs = styled.div`
@@ -75,7 +75,9 @@ export const NavBar = () => {
   } = router;
 
   const terminalPath = pathname.replace("/feed/[subdomain]", "");
-  console.log("terminalPath: ", terminalPath);
+  const currentPath = terminalPath.length > 0 ? terminalPath : "/";
+
+  console.log("currentPath: ", currentPath);
 
   return (
     <Nav as="header">
@@ -83,19 +85,21 @@ export const NavBar = () => {
       <NavTabs>
         {NAV_LINK_INDICES.map(({ path, name }) => (
           <Link href={path} key={path}>
-            <StyledTab isactive={path === terminalPath} key={path}>
+            <StyledTab isactive={path === currentPath} key={path}>
               {name}
             </StyledTab>
           </Link>
         ))}
       </NavTabs>
       <SettingsMenu>
-        <IconButton
-          aria-label="Search database"
-          size="sm"
-          variant="ghost"
-          icon={<SettingsIcon boxSize={4} color="gainsboro" />}
-        />
+        <Link href={ADMIN_PATH}>
+          <IconButton
+            aria-label="Search database"
+            size="sm"
+            variant="ghost"
+            icon={<HamburgerIcon margin="3px" boxSize={4} color="gainsboro" />}
+          />
+        </Link>
       </SettingsMenu>
     </Nav>
   );

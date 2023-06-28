@@ -32,7 +32,11 @@ const StyledCard = styled(Card)`
 //   color: gainsboro;
 // `;
 
-const StyledImage = styled(Image)``;
+const StyledImage = styled(Image)`
+  height: auto;
+  width: 100%;
+  object-fit: cover;
+`;
 
 const FakePic = styled.div`
   background-color: gainsboro;
