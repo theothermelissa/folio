@@ -3,8 +3,10 @@ import SessionNode from "supertokens-node/recipe/session";
 import Dashboard from "supertokens-node/recipe/dashboard";
 import { appInfo } from "./appInfo";
 import { AuthConfig } from "../interfaces";
+import Session from "supertokens-node/recipe/session";
 
-const { SUPERTOKENS_URI, SUPERTOKENS_API_KEY } = process.env;
+const { SUPERTOKENS_URI, SUPERTOKENS_API_KEY, NEXT_PUBLIC_BASE_URL_PATH } =
+  process.env;
 
 export let backendConfig = (): AuthConfig => {
   return {
@@ -22,7 +24,11 @@ export let backendConfig = (): AuthConfig => {
         contactMethod: "EMAIL_OR_PHONE",
         flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
       }),
-      SessionNode.init(),
+      Session.init({
+        getTokenTransferMethod: () => "header",
+        // sessionScope: `.${NEXT_PUBLIC_BASE_URL_PATH}`,
+        // cookieDomain: ".example.com",
+      }),
       Dashboard.init(),
     ],
     isInServerlessEnv: true,

@@ -5,11 +5,12 @@
 // import { activePath, activeTabIndex } from "../atoms/nav-atoms";
 import { ADMIN_PATH, NAVBAR_HEIGHT, NAV_LINK_INDICES } from "../constants";
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { HamburgerIcon, SettingsIcon } from "@chakra-ui/icons";
-import { Heading, IconButton, Text } from "@chakra-ui/react";
+import { Flex, Heading, IconButton, Skeleton, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import Loading from "./loading";
 
 const TOP_Z_INDEX = 999;
 
@@ -23,21 +24,23 @@ const Nav = styled.div`
   position: fixed;
   display: flex;
   justify-content: space-between;
-  background-color: white;
-  border-bottom: 2px solid whitesmoke;
+  background-color: ghostwhite;
+  // border-bottom: 2px solid whitesmoke;
   width: 100%;
   height: ${NAVBAR_HEIGHT}px;
-  align-items: flex-end;
+  align-items: center;
   z-index: ${TOP_Z_INDEX};
 `;
 
-const PageName = styled(Heading)`
-  display: flex;
+const PageNameWrapper = styled(Flex)`
   flex: 1;
-  height: 100%;
   justify-content: flex-start;
   align-items: center;
-  padding: 24px 5px 5px 30px;
+  padding: 0px 0px 0px 24px;
+`;
+
+const PageNameText = styled(Heading)`
+  height: 100%;
 `;
 
 const SettingsMenu = styled.div`
@@ -55,14 +58,34 @@ const NavTabs = styled.div`
 `;
 
 const StyledTab = styled.div<TabProps>`
-  margin: 10px 0px -2px 0px;
+  margin: 10px 0px 0px 0px;
   padding: 0px 10px 9px 10px;
-  border-bottom: ${(props) =>
-    props.isactive ? "2px solid black" : "2px solid whitesmoke"};
+  border-bottom: ${(props) => (props.isactive ? "2px solid black" : "none")};
   color: ${(props) => (props.isactive ? "black" : "grey")};
-  // font-weight: ${(props) => (props.isactive ? "bold" : "normal")};
-  font-weight: bold;
+  font-weight: ${(props) => (props.isactive ? "bold" : "normal")};
 `;
+
+type NameProps = { name?: string | string[] };
+
+const PageName = (props: NameProps) => {
+  const { name } = props;
+  const [loaded, setLoaded] = useState(false);
+  const [title, setTitle] = useState("");
+
+  useEffect(() => {
+    if (Boolean(name)) {
+      setTitle(name.toString());
+      setLoaded(true);
+    }
+  });
+  return (
+    <PageNameWrapper>
+      <Skeleton isLoaded={loaded}>
+        <PageNameText>{title}</PageNameText>
+      </Skeleton>
+    </PageNameWrapper>
+  );
+};
 
 // TODO mpm: rewrite this to use Chakra color theme
 // TODO mpm: ... er, define color theme 🤦🏻‍♀️
@@ -77,11 +100,9 @@ export const NavBar = () => {
   const terminalPath = pathname.replace("/feed/[subdomain]", "");
   const currentPath = terminalPath.length > 0 ? terminalPath : "/";
 
-  console.log("currentPath: ", currentPath);
-
   return (
     <Nav as="header">
-      <PageName fontSize="2xl">{subdomain}</PageName>
+      <PageName name={subdomain} />
       <NavTabs>
         {NAV_LINK_INDICES.map(({ path, name }) => (
           <Link href={path} key={path}>

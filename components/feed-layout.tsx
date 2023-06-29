@@ -16,7 +16,7 @@ type LayoutProps = {
 const View = styled(Flex)`
   height: 100%;
   width: 100%;
-  margin-top: ${NAVBAR_HEIGHT}px;
+  margin-top: calc(${NAVBAR_HEIGHT}px + 40px);
 `;
 
 const FeedLayout = (props: LayoutProps) => {

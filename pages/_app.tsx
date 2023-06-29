@@ -19,6 +19,7 @@ function MyApp({ Component, pageProps }): JSX.Element {
   useEffect(() => {
     async function doRefresh() {
       if (pageProps.fromSupertokens === "needs-refresh") {
+        console.log("needs refresh");
         if (await Session.attemptRefreshingSession()) {
           location.reload();
         } else {
@@ -30,6 +31,7 @@ function MyApp({ Component, pageProps }): JSX.Element {
     doRefresh();
   }, [pageProps.fromSupertokens]);
   if (pageProps.fromSupertokens === "needs-refresh") {
+    console.log("needs refresh");
     return null;
   }
 

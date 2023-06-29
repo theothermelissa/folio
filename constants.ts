@@ -34,4 +34,4 @@ export const NAV_LINK_INDICES = [
   },
 ];
 
-export const NAVBAR_HEIGHT = 62;
+export const NAVBAR_HEIGHT = 82;

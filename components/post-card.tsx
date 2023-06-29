@@ -1,21 +1,9 @@
-import {
-  Card,
-  CardBody,
-  Stack,
-  Text,
-  Heading,
-  Divider,
-  CardFooter,
-  ButtonGroup,
-  Button,
-  Image,
-} from "@chakra-ui/react";
+import { Card, CardBody, Stack, Text, Heading, Image } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 type PostCardProps = {
-  children: React.ReactNode;
   name: string;
   id: number;
   preview: string;
@@ -24,13 +12,9 @@ type PostCardProps = {
 
 const StyledCard = styled(Card)`
   margin: 10px;
-  display: block;
   break-inside: avoid;
+  display: flex;
 `;
-
-// const StyledDivider = styled(Divider)`
-//   color: gainsboro;
-// `;
 
 const StyledImage = styled(Image)`
   height: auto;
@@ -50,9 +34,7 @@ const PostInfo = styled(Stack)`
 `;
 
 export const PostCard = (props: PostCardProps) => {
-  const { children, id, name, imageUrls, preview } = props;
-
-  const router = useRouter();
+  const { id, name, imageUrls, preview } = props;
 
   return (
     <Link
@@ -61,7 +43,7 @@ export const PostCard = (props: PostCardProps) => {
         query: { id: id },
       }}
     >
-      <StyledCard value={id} maxW="sm" borderRadius={"sm"}>
+      <StyledCard value={id} maxW="sm" borderRadius="md">
         <CardBody style={{ padding: "15px" }}>
           {imageUrls.length > 0 && (
             <StyledImage
@@ -72,24 +54,9 @@ export const PostCard = (props: PostCardProps) => {
           )}
           <PostInfo mt="6" spacing="1">
             {name.length > 0 && <Heading size="md">{name}</Heading>}
-            <Text>{preview}</Text>
-            {/* <Text color="blue.600" fontSize="2xl">
-              tags
-            </Text> */}
+            <Text minW={"fill-available"}>{preview}</Text>
           </PostInfo>
         </CardBody>
-        {/* <StyledDivider /> */}
-        {/* <CardFooter> */}
-        {/* <ButtonGroup spacing="2">
-            <Button variant="solid" colorScheme="blue">
-            Read More
-          </Button> */}
-        {/* <Button variant="ghost" colorScheme="blue">
-              Add to cart
-            </Button> */}
-        {/* {children} */}
-        {/* </ButtonGroup> */}
-        {/* </CardFooter> */}
       </StyledCard>
     </Link>
   );

@@ -1,7 +1,7 @@
 import React from "react";
-import SessionReact, {
-  useSessionContext,
-} from "supertokens-auth-react/recipe/session";
+import { useSessionContext } from "supertokens-auth-react/recipe/session";
+import { SessionAuth } from "supertokens-auth-react/recipe/session";
+
 // import SuperTokensReact from "supertokens-auth-react";
 
 type ProtectedProps = {
@@ -15,5 +15,5 @@ export default function Protected({ children }: ProtectedProps) {
     return null;
   }
 
-  return <SessionReact.SessionAuth>{children}</SessionReact.SessionAuth>;
+  return <SessionAuth>{children}</SessionAuth>;
 }

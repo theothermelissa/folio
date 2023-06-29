@@ -4,6 +4,9 @@ import { NextPageWithLayout } from "../../../types";
 
 const Feed: NextPageWithLayout = () => {
   const router = useRouter();
+  const {
+    query: { subdomain },
+  } = router;
 
   return <p>This is the subdomain index: {router.query.subdomain}</p>;
 };

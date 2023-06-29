@@ -1,59 +1,124 @@
 import { useRouter } from "next/router";
 import PostList from "../../../../components/post-list";
 import FeedLayout from "../../../../components/feed-layout";
-import { Flex } from "@chakra-ui/react";
+import { Box, Flex, Grid, GridItem, Skeleton } from "@chakra-ui/react";
 import { SWRConfig } from "swr/_internal";
 import { GetStaticPropsContext } from "next/types";
-// import { CreatePost } from "../../../../components/post-controls";
+import prisma from "../../../../lib/prisma";
+import useSWR from "swr";
+import Loading from "../../../../components/loading";
+import { useEffect, useState } from "react";
+import { Post } from "../../../../types";
 
-const url = `/api/posts`;
+// const url = `/api/posts`;
 
-const fetcher = async ({ url, subdomain }) => {
-  const res = await fetch(url, { method: "GET", headers: { subdomain } });
-  return res.json();
+// const fetcher = (url: string, subdomain: string) => {
+//   const posts = fetch(url, { method: "GET", headers: { subdomain } })
+//     .then((res) => res.json())
+//     .catch((error) =>
+//       console.error(
+//         "Oh no -- unable to fetch posts. Here's what we know: ",
+//         error
+//       )
+//     );
+//   return posts;
+// };
+
+export async function getStaticPaths() {
+  const result = await prisma.feed.findMany({});
+
+  // todo: better types from prisma results
+  const paths = result.map((post: any) => ({
+    params: { subdomain: post.subdomain },
+  }));
+  // console.log("paths from getStaticPaths: ", JSON.stringify(paths));
+  return {
+    paths,
+    fallback: false,
+  };
+}
+
+export async function getStaticProps(context: GetStaticPropsContext) {
+  const {
+    params: { subdomain },
+  } = context;
+  const result = await prisma.feed.findUnique({
+    where: {
+      subdomain: subdomain.toString(),
+    },
+    include: {
+      posts: true,
+    },
+  });
+
+  // console.log("result from getStaticProps: ", JSON.stringify(result));
+
+  // const posts = await fetcher({ url, subdomain });
+  return {
+    props: {
+      // fallback: {
+      //   posts: result.posts,
+      // },
+      posts: JSON.parse(JSON.stringify(result.posts)),
+    },
+  };
+}
+
+const PostSkeleton = ({ height }) => (
+  <Flex style={{ breakInside: "avoid", padding: "8px" }}>
+    <Skeleton flex="1" height={height} />
+  </Flex>
+);
+
+const getRandomHeightString = ({ min, max }) => {
+  const heightString = Math.round(Math.random() * (max - min) + min).toString();
+  return heightString;
 };
 
-// export async function getStaticProps(context: GetStaticPropsContext) {
-//   const {
-//     params: { subdomain },
-//   } = context;
-//   const posts = await fetcher({ url, subdomain });
-//   return {
-//     props: {
-//       fallback: {
-//         url: posts,
-//       },
-//     },
-//   };
-// }
+const PostsLoading = ({ numberSkeletons }) => {
+  let fakePosts = [] as JSX.Element[];
 
-// export async function getStaticPaths() {
-//   const res = await fetch("/api/posts");
-//   const posts = await res.json();
+  for (let i = 0; i < numberSkeletons; i++) {
+    fakePosts.push(
+      <PostSkeleton
+        key={`post-skeleton-${i}`}
+        height={getRandomHeightString({ min: 180, max: 450 })}
+      />
+    );
+  }
+  return <Grid>{fakePosts.map((p) => p)}</Grid>;
+};
 
-//   const paths = posts.map((post: any) => ({
-//     params: { id: post.id },
-//   }));
-//   return {
-//     paths,
-//     fallback: true,
-//   };
-// }
-
-const Posts = ({ fallback }) => {
+const Posts = (props) => {
+  const { fallback, posts } = props;
+  // const [feedPosts, setFeedPosts] = useState<Post[]>([]);
   const router = useRouter();
   const subdomain = router.query.subdomain as string;
+  const url = "/api/posts";
+
+  // const { data, isLoading, error } = useSWR(url, () => fetcher(url, subdomain));
+
+  // useEffect(() => {
+  //   if (data && data.posts) {
+  //     setFeedPosts(data.posts);
+  //   }
+  // }, [data]);
 
   return (
     <SWRConfig value={fallback}>
-      <Flex flexDirection="column" width="100%">
-        {Boolean(subdomain) ? (
-          <PostList subdomain={subdomain} />
+      <Box
+        padding={0}
+        w="100%"
+        mx="auto"
+        sx={{ columnCount: [1, 2, 3, 4, 5], columnGap: "4px" }}
+        minBlockSize="-webkit-fill-available"
+      >
+        {posts && posts.length > 0 ? (
+          <PostList posts={posts} isLoading={!posts} />
         ) : (
-          <div>No feed here 🤷🏻‍♀️</div>
+          <PostsLoading numberSkeletons={13} />
         )}
-        {/* <CreatePost /> */}
-      </Flex>
+      </Box>
     </SWRConfig>
   );
 };
