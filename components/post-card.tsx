@@ -11,7 +11,7 @@ type PostCardProps = {
 };
 
 const StyledCard = styled(Card)`
-  margin: 10px;
+  // margin: 10px;
   break-inside: avoid;
   display: flex;
 `;

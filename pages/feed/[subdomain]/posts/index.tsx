@@ -1,14 +1,11 @@
 import { useRouter } from "next/router";
-import PostList from "../../../../components/post-list";
+import PostItem from "../../../../components/post-item";
 import FeedLayout from "../../../../components/feed-layout";
-import { Box, Flex, Grid, GridItem, Skeleton } from "@chakra-ui/react";
+import { Box, Flex, Grid, Skeleton } from "@chakra-ui/react";
 import { SWRConfig } from "swr/_internal";
 import { GetStaticPropsContext } from "next/types";
 import prisma from "../../../../lib/prisma";
 import useSWR from "swr";
-import Loading from "../../../../components/loading";
-import { useEffect, useState } from "react";
-import { Post } from "../../../../types";
 
 // const url = `/api/posts`;
 
@@ -110,11 +107,11 @@ const Posts = (props) => {
         padding={0}
         w="100%"
         mx="auto"
-        sx={{ columnCount: [1, 2, 3, 4, 5], columnGap: "4px" }}
-        minBlockSize="-webkit-fill-available"
+        sx={{ columnCount: [1, 2, 3, 4, 5], columnGap: "12px" }}
+        margin="0px 16px"
       >
         {posts && posts.length > 0 ? (
-          <PostList posts={posts} isLoading={!posts} />
+          posts.map((post) => <PostItem key={post.id} post={post} />)
         ) : (
           <PostsLoading numberSkeletons={13} />
         )}
