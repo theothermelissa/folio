@@ -1,11 +1,12 @@
-const { NEXT_PUBLIC_BASE_URL_PATH } = process.env;
+const { NEXT_PUBLIC_BASE_URL_PATH, NEXT_PUBLIC_BASE_PROTOCOL } = process.env;
 
 export const HOME_PATH = "/";
 export const ABOUT_PATH = "/about";
 export const CONTACT_PATH = "/contact";
 export const POSTS_PATH = "/posts";
 export const PROJECTS_PATH = "/projects";
-export const ADMIN_PATH = "/admin";
+// export const ADMIN_PATH = `${NEXT_PUBLIC_BASE_PROTOCOL}${NEXT_PUBLIC_BASE_URL_PATH}/admin`;
+export const ADMIN_PATH = `http://localhost:3000/admin`;
 export const LOGIN_PATH = "/login";
 
 export const NAV_LINK_INDICES = [

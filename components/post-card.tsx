@@ -1,4 +1,4 @@
-import { Card, CardBody, Stack, Text, Heading, Image } from "@chakra-ui/react";
+import { Card, CardBody, Stack, Text, Heading } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import Link from "next/link";
 import { CldImage } from "next-cloudinary";
