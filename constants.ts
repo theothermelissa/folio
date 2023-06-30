@@ -1,3 +1,5 @@
+const { NEXT_PUBLIC_BASE_URL_PATH } = process.env;
+
 export const HOME_PATH = "/";
 export const ABOUT_PATH = "/about";
 export const CONTACT_PATH = "/contact";

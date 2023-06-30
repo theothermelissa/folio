@@ -1,25 +1,10 @@
 import { useRouter } from "next/router";
-import PostItem from "../../../../components/post-item";
+import PostItem from "../../../../components/post-feed-item";
 import FeedLayout from "../../../../components/feed-layout";
 import { Box, Flex, Grid, Skeleton } from "@chakra-ui/react";
 import { SWRConfig } from "swr/_internal";
 import { GetStaticPropsContext } from "next/types";
 import prisma from "../../../../lib/prisma";
-import useSWR from "swr";
-
-// const url = `/api/posts`;
-
-// const fetcher = (url: string, subdomain: string) => {
-//   const posts = fetch(url, { method: "GET", headers: { subdomain } })
-//     .then((res) => res.json())
-//     .catch((error) =>
-//       console.error(
-//         "Oh no -- unable to fetch posts. Here's what we know: ",
-//         error
-//       )
-//     );
-//   return posts;
-// };
 
 export async function getStaticPaths() {
   const result = await prisma.feed.findMany({});
@@ -28,10 +13,9 @@ export async function getStaticPaths() {
   const paths = result.map((post: any) => ({
     params: { subdomain: post.subdomain },
   }));
-  // console.log("paths from getStaticPaths: ", JSON.stringify(paths));
   return {
     paths,
-    fallback: false,
+    fallback: "blocking",
   };
 }
 
@@ -48,9 +32,6 @@ export async function getStaticProps(context: GetStaticPropsContext) {
     },
   });
 
-  // console.log("result from getStaticProps: ", JSON.stringify(result));
-
-  // const posts = await fetcher({ url, subdomain });
   return {
     props: {
       // fallback: {
@@ -88,18 +69,7 @@ const PostsLoading = ({ numberSkeletons }) => {
 
 const Posts = (props) => {
   const { fallback, posts } = props;
-  // const [feedPosts, setFeedPosts] = useState<Post[]>([]);
   const router = useRouter();
-  const subdomain = router.query.subdomain as string;
-  const url = "/api/posts";
-
-  // const { data, isLoading, error } = useSWR(url, () => fetcher(url, subdomain));
-
-  // useEffect(() => {
-  //   if (data && data.posts) {
-  //     setFeedPosts(data.posts);
-  //   }
-  // }, [data]);
 
   return (
     <SWRConfig value={fallback}>

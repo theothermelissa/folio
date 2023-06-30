@@ -1,7 +1,7 @@
 import { Card, CardBody, Stack, Text, Heading, Image } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { CldImage } from "next-cloudinary";
 
 type PostCardProps = {
   name: string;
@@ -16,7 +16,7 @@ const StyledCard = styled(Card)`
   display: flex;
 `;
 
-const StyledImage = styled(Image)`
+const StyledImage = styled(CldImage)`
   height: auto;
   width: 100%;
   object-fit: cover;
@@ -47,14 +47,17 @@ export const PostCard = (props: PostCardProps) => {
         <CardBody style={{ padding: "15px" }}>
           {imageUrls.length > 0 && (
             <StyledImage
-              borderRadius={"sm"}
+              height="800"
+              width="400"
               src={imageUrls[0]}
               alt="Post image"
             />
           )}
           <PostInfo mt="6" spacing="1">
             {name.length > 0 && <Heading size="md">{name}</Heading>}
-            <Text minW={"fill-available"}>{preview}</Text>
+            <Text minW={"fill-available"} noOfLines={[2, 3, 5]}>
+              {preview}
+            </Text>
           </PostInfo>
         </CardBody>
       </StyledCard>

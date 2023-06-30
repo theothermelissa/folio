@@ -1,5 +1,5 @@
-import FeedLayout from "../../../../components/feed-layout";
-import Protected from "../../../../components/protected-page";
+import FeedLayout from "../../components/feed-layout";
+import Protected from "../../components/protected-page";
 
 const Admin = () => {
   return (

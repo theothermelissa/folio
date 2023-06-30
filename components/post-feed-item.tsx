@@ -1,7 +1,6 @@
 import { Post } from "../types";
-import { Box, Grid, Skeleton } from "@chakra-ui/react";
+import { Grid } from "@chakra-ui/react";
 import { PostCard } from "./post-card";
-import { DeletePost } from "./post-controls";
 
 type ItemProps = {
   post: Post;

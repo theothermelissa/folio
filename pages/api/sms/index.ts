@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next/types";
 import prisma from "../../../lib/prisma";
+import { generateNewFeedName } from "../../../lib/getSubdomain";
 
 const { NEXT_PUBLIC_BASE_URL_PATH, NEXT_PUBLIC_BASE_PROTOCOL } = process.env;
 
@@ -19,108 +20,6 @@ type FeedProps = {
 // if the feed exists, post this message to it
 // if the feed does not exist, create it and post this message to it
 
-const adjectives = [
-  "ajar",
-  "rare",
-  "wry",
-  "bad",
-  "big",
-  "wide",
-  "good",
-  "ill",
-  "near",
-  "silly",
-  "mad",
-  "weak",
-  "six",
-  "low",
-  "luxe",
-  "bent",
-  "one",
-  "meek",
-  "glib",
-  "even",
-  "hard",
-  "sad",
-  "rich",
-  "hot",
-  "keen",
-  "drab",
-  "soft",
-  "rude",
-  "huge",
-  "mute",
-  "used",
-  "open",
-  "fair",
-  "two",
-  "icy",
-  "five",
-  "high",
-  "cool",
-  "half",
-  "ten",
-  "real",
-  "able",
-  "flat",
-  "random",
-  "sassy",
-  "artsy",
-  "nine",
-  "new",
-  "sick",
-  "dry",
-];
-const nouns = [
-  "cub",
-  "cave",
-  "cows",
-  "crown",
-  "cable",
-  "crate",
-  "cough",
-  "ratio",
-  "power",
-  "music",
-  "salad",
-  "bread",
-  "night",
-  "cheek",
-  "river",
-  "drama",
-  "bonus",
-  "honey",
-  "virus",
-  "shirt",
-  "phone",
-  "dresser",
-  "buyer",
-  "topic",
-  "owner",
-  "uncle",
-  "tooth",
-  "video",
-  "event",
-  "basis",
-  "entry",
-  "brood",
-  "media",
-  "truth",
-  "pizza",
-  "fox",
-  "heart",
-  "story",
-  "actor",
-  "queen",
-  "depth",
-  "movie",
-  "guest",
-  "world",
-  "child",
-  "thing",
-  "paper",
-];
-
 async function getUniqueFeedName() {
   const existingFeeds = await prisma?.feed.findMany({
     select: {
@@ -129,21 +28,6 @@ async function getUniqueFeedName() {
   });
   const existingNames = existingFeeds?.map((feed) => feed.subdomain);
   return generateNewFeedName(existingNames);
-}
-
-function generateNewFeedName(list: string[]) {
-  console.log("list: ", list);
-  let suggestedName = `${
-    adjectives[Math.floor(Math.random() * adjectives.length)]
-  }-${nouns[Math.floor(Math.random() * nouns.length)]}`;
-  console.log("suggesting: ", suggestedName);
-  if (!list.includes(suggestedName)) {
-    console.log("That works!");
-    return suggestedName;
-  } else {
-    console.log("Not unique; regenerating");
-    generateNewFeedName(list);
-  }
 }
 
 let uniqueFeedName = "";
@@ -196,34 +80,6 @@ async function getUserOnFeed(props: FeedProps) {
     uniqueFeedName = feedName;
     return newRecord;
   }
-  // .then((userOnFeed) => {
-  //   if (userOnFeed) {
-  //     return userOnFeed.feedId;
-  //   } else prisma.create;
-  // })
-  // // if the feed exists, return its id
-  // // if the feed doesn't exist, create it and return its id
-  // .then((feedId) =>
-  //   prisma?.feed.findUnique({
-  //     where: {
-  //       id: feedId,
-  //     },
-  //   })
-  // );
-  //   if (!feed) {
-  //     const newFeed = await prisma?.feed.create({
-  //       data: {
-  //         subdomain: to,
-  //         user: {
-  //           connect: {
-  //             phone: from,
-  //           },
-  //         },
-  //       },
-  //     });
-  //     return newFeed.id;
-  //   }
-  //   return feed.id;
 }
 
 type PostProps = {
@@ -294,37 +150,6 @@ export default async function handler(
     media
   );
 
-  //   // TODO mpm: test this
-  //   async function getUserByPhone(phoneNumber: string) {
-  //     // const user = getUserBy("phone", phoneNumber);
-  //     const user = await prisma.user
-  //       .findUnique({
-  //         where: {
-  //           phone: phoneNumber,
-  //         },
-  //       })
-  //       .then((response) => (response ? JSON.stringify(response) : null))
-  //       .catch((error) => console.log(error));
-
-  //     if (!user) {
-  //       // const newUser = createUser({ phone: phoneNumber, email: ""})
-  //       const newUser = await prisma.user
-  //         .create({
-  //           data: {
-  //             phone: phoneNumber,
-  //           },
-  //         })
-  //         .then((response) => JSON.stringify(response))
-  //         .catch((error) => console.log(error));
-  //       console.log("user created: ", newUser);
-  //       return newUser;
-  //     }
-  //     console.log("user found: ", user);
-  //     return user;
-  //   }
-
-  //   const user = getUserByPhone(author);
-
   const userOnFeed = await getUserOnFeed({ to, from: author });
 
   try {
@@ -340,17 +165,4 @@ export default async function handler(
     console.error("Unexpected error: ", error);
     response.status(500).json({ message: error });
   }
-
-  //   try {
-  //     await prisma?.post.create({
-  //       data: {
-  //         title,
-  //         publishedDate: date,
-  //         content,
-  //         media,
-  //       },
-  //     });
-  //     response.status(200).json({ message: "Successfully posted. I think." });
-  //   } catch (error) {
-  //   }
 }

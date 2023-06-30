@@ -5,7 +5,7 @@ const apiBasePath = "/api/auth/";
 export const websiteDomain =
   process.env.BASE_URL_PATH ||
   process.env.NEXT_PUBLIC_APP_URL ||
-  `http://localhost:${port}`;
+  `localhost:${port}`;
 
 export const appInfo = {
   appName: "Folio",

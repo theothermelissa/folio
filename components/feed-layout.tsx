@@ -5,7 +5,6 @@ import styled from "@emotion/styled";
 import Page from "./page-layout";
 import { NavBar } from "./navbar";
 import { NAVBAR_HEIGHT } from "../constants";
-import { useRouter } from "next/router";
 
 export const dynamicParams = true;
 
@@ -21,31 +20,12 @@ const View = styled(Flex)`
 
 const FeedLayout = (props: LayoutProps) => {
   const { children } = props;
-  const router = useRouter();
-
-  const subdomain = router.query.subdomain as string;
-
-  const handleClick = async () => {
-    fetch(`/api`, {
-      method: "POST",
-      headers: { "x-subdomain": subdomain },
-      body: "1234",
-    })
-      .then((response: Response) => {
-        if (response.status === 200) {
-          router.push("/admin");
-        }
-      })
-      .catch((error) => console.error("Unable to post; error: ", error));
-  };
 
   return (
-    <>
-      <Page>
-        <NavBar />
-        <View>{children}</View>
-      </Page>
-    </>
+    <Page>
+      <NavBar />
+      <View>{children}</View>
+    </Page>
   );
 };
 

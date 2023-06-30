@@ -25,8 +25,7 @@ export let backendConfig = (): AuthConfig => {
         flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
       }),
       Session.init({
-        getTokenTransferMethod: () => "header",
-        // sessionScope: `.${NEXT_PUBLIC_BASE_URL_PATH}`,
+        // getTokenTransferMethod: () => "header",
         // cookieDomain: ".example.com",
       }),
       Dashboard.init(),

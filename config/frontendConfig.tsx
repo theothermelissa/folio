@@ -4,7 +4,9 @@ import { appInfo } from "./appInfo";
 import Router from "next/router";
 import Session from "supertokens-auth-react/recipe/session";
 
-const { NEXT_PUBLIC_BASE_URL_PATH } = process.env;
+// const { NEXT_PUBLIC_BASE_URL_PATH } = process.env;
+
+const NEXT_PUBLIC_BASE_URL_PATH = "localhost:3000";
 
 export let frontendConfig = () => {
   return {
@@ -14,9 +16,22 @@ export let frontendConfig = () => {
     recipeList: [
       PasswordlessReact.init({
         contactMethod: "EMAIL_OR_PHONE",
+        getRedirectionURL: async (context) => {
+          if (context.action === "SUCCESS") {
+            console.log("Successfully logged in");
+            if (context.redirectToPath !== undefined) {
+              console.log("redirectToPath: ", context.redirectToPath);
+              // we are navigating back to where the user was before they authenticated
+              return context.redirectToPath;
+            }
+            console.log("no redirectToPath, going to admin");
+            return "/admin";
+          }
+          return undefined;
+        },
       }),
       Session.init({
-        tokenTransferMethod: "header",
+        // tokenTransferMethod: "header",
         sessionTokenFrontendDomain: `.${NEXT_PUBLIC_BASE_URL_PATH}`,
       }),
     ],
