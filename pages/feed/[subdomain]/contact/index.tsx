@@ -1,4 +1,4 @@
-import FeedLayout from "../../../../components/feed-layout";
+import FeedLayout from "../../../../layouts/feed-layout";
 
 const Contact = () => {
   return <h1>Contact go here</h1>;

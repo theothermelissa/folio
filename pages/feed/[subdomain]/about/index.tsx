@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import FeedLayout from "../../../../components/feed-layout";
+import FeedLayout from "../../../../layouts/feed-layout";
 
 const About = () => {
   const router = useRouter();

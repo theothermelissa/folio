@@ -1,4 +1,4 @@
-import FeedLayout from "../../../../components/feed-layout";
+import FeedLayout from "../../../../layouts/feed-layout";
 
 const Projects = () => {
   return <h1>Projects go here</h1>;

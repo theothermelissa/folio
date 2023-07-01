@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import PostItem from "../../../../components/post-feed-item";
-import FeedLayout from "../../../../components/feed-layout";
+import FeedLayout from "../../../../layouts/feed-layout";
 import { Box, Flex, Grid, Skeleton } from "@chakra-ui/react";
 import { SWRConfig } from "swr/_internal";
 import { GetStaticPropsContext } from "next/types";
@@ -32,12 +32,14 @@ export async function getStaticProps(context: GetStaticPropsContext) {
     },
   });
 
+  const posts = JSON.parse(JSON.stringify(result.posts));
+
   return {
     props: {
       // fallback: {
       //   posts: result.posts,
       // },
-      posts: JSON.parse(JSON.stringify(result.posts)),
+      posts: posts,
     },
   };
 }
@@ -69,7 +71,6 @@ const PostsLoading = ({ numberSkeletons }) => {
 
 const Posts = (props) => {
   const { fallback, posts } = props;
-  const router = useRouter();
 
   return (
     <SWRConfig value={fallback}>

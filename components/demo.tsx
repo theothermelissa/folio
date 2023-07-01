@@ -25,7 +25,6 @@ type DemoProps = {
 };
 
 function Demo({ children }: DemoProps) {
-  // ah, sweet mystery of life, at last I've found you
   const session = useSessionContext();
 
   async function logoutClicked() {

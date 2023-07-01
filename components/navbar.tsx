@@ -20,12 +20,10 @@ type TabProps = {
   key: string;
 };
 
-const Nav = styled.div`
+const Nav = styled(Flex)`
   position: fixed;
-  display: flex;
   justify-content: space-between;
   background-color: ghostwhite;
-  // border-bottom: 2px solid whitesmoke;
   width: 100%;
   height: ${NAVBAR_HEIGHT}px;
   align-items: center;
@@ -101,7 +99,7 @@ export const NavBar = () => {
   const currentPath = terminalPath.length > 0 ? terminalPath : "/";
 
   return (
-    <Nav as="header">
+    <Nav as="header" boxShadow="base">
       <PageName name={subdomain} />
       <NavTabs>
         {NAV_LINK_INDICES.map(({ path, name }) => (

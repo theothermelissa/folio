@@ -20,6 +20,7 @@ const StyledImage = styled(CldImage)`
   height: auto;
   width: 100%;
   object-fit: cover;
+  border-radius: 4px 4px 0px 0px;
 `;
 
 const FakePic = styled.div`
@@ -43,8 +44,8 @@ export const PostCard = (props: PostCardProps) => {
         query: { id: id },
       }}
     >
-      <StyledCard value={id} maxW="sm" borderRadius="md">
-        <CardBody style={{ padding: "15px" }}>
+      <StyledCard boxShadow="lg" value={id} maxW="sm" borderRadius="md">
+        <CardBody style={{ padding: "0px" }}>
           {imageUrls.length > 0 && (
             <StyledImage
               height="800"

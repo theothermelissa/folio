@@ -2,15 +2,8 @@
 
 import { Flex } from "@chakra-ui/react";
 import styled from "@emotion/styled";
-import Page from "./page-layout";
-import { NavBar } from "./navbar";
 import { NAVBAR_HEIGHT } from "../constants";
-
-export const dynamicParams = true;
-
-type LayoutProps = {
-  children: React.ReactNode;
-};
+import PageLayout from "./page-layout";
 
 const View = styled(Flex)`
   height: 100%;
@@ -18,14 +11,11 @@ const View = styled(Flex)`
   margin-top: calc(${NAVBAR_HEIGHT}px + 40px);
 `;
 
-const FeedLayout = (props: LayoutProps) => {
-  const { children } = props;
-
+const FeedLayout = ({ children }) => {
   return (
-    <Page>
-      <NavBar />
+    <PageLayout>
       <View>{children}</View>
-    </Page>
+    </PageLayout>
   );
 };
 
