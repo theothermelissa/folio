@@ -58,8 +58,8 @@ const Body = styled(Flex)`
   flex-flow: column;
   // gap: 60px;
   margin: calc(${NAVBAR_HEIGHT}px) 30px 0px calc(${SIDEBAR_WIDTH}px + 42px);
-  scroll-behavior: smooth;
-  scroll-margin-top: ${NAVBAR_HEIGHT}px;
+  // scroll-behavior: smooth;
+  // scroll-margin-top: ${NAVBAR_HEIGHT}px;
 `;
 
 const SidebarSectionLink = ({
@@ -143,15 +143,13 @@ const Section = ({ label, children, id, onScrollIntoView, isSub }) => {
 
   return (
     <>
-      <LinkTarget />
+      <LinkTarget id={id} />
       <Box width="100%" ref={sectionRef}>
         <Heading
-          as={as()}
+          // as={as()}
           fontSize={size()}
           style={style()}
-          id={id}
           color="dimgrey"
-          // onScroll={onIsActive}
         >
           {label}
         </Heading>
@@ -168,7 +166,7 @@ const AdminBody = ({ sections, onScrollIntoView }) => {
         <Section
           onScrollIntoView={onScrollIntoView}
           key={`${id}-section`}
-          id={`${id}-section`}
+          id={id}
           label={label}
           isSub={false}
         >
