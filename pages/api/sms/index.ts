@@ -164,7 +164,7 @@ export default async function handler(
       isNewFeed: newAccount,
     });
   } catch (error) {
-    console.error("Unexpected error: ", error);
+    console.error("Unexpected error when posting: ", error);
     response.status(500).json({ message: error });
   }
 }
