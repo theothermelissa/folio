@@ -153,14 +153,7 @@ const Section = ({ label, children, id, onScrollIntoView, isSub }) => {
           color="dimgrey"
           // onScroll={onIsActive}
         >
-          {label}{" "}
-          <IconButton
-            aria-label="edit"
-            variant="ghost"
-            color="dimgrey"
-            icon={<EditIcon />}
-            onClick={() => alert("edit info in this section")}
-          />
+          {label}
         </Heading>
         {children}
       </Box>
@@ -205,11 +198,18 @@ const Admin = ({ userData }) => {
   const { id, email, name, image, projects, posts, phone, ownedFeeds, feeds } =
     userData;
 
-  useEffect(() => {}, [currentSection]);
-
   const onScrollIntoView = (id: string) => {
     const baseId = id.replace("-section", "");
     setCurrentSection(baseId);
+  };
+
+  const onNameEditClick = async () => {
+    console.log("updating name to Supercalifragilisticexpialidocious");
+    const update = await fetch(`/api/account/${id}`, {
+      method: "PUT",
+      body: "Supercalifragilisticexpialidocious",
+    });
+    console.log("update result: ", update);
   };
 
   const sections = [
@@ -222,7 +222,16 @@ const Admin = ({ userData }) => {
           id: "username",
           component: (
             <Box minHeight="500px">
-              <Text fontSize="md">{name}</Text>
+              <Text fontSize="md">
+                {name}{" "}
+                <IconButton
+                  aria-label="edit"
+                  variant="ghost"
+                  color="dimgrey"
+                  icon={<EditIcon />}
+                  onClick={onNameEditClick}
+                />
+              </Text>
             </Box>
           ),
         },
@@ -276,7 +285,9 @@ const Admin = ({ userData }) => {
             <Box minHeight="500px">
               {ownedFeeds &&
                 ownedFeeds.map((feed) => (
-                  <Text fontSize="md">{feed.subdomain}</Text>
+                  <Text key={feed.subdomain} fontSize="md">
+                    {feed.subdomain}
+                  </Text>
                 ))}
             </Box>
           ),
@@ -301,7 +312,11 @@ const Admin = ({ userData }) => {
       component: (
         <Box minHeight="500px">
           {posts.length > 0 &&
-            posts.map((post) => <Text fontSize="md">{post.id}</Text>)}
+            posts.map((post) => (
+              <Text key={`post-${post.id}`} fontSize="md">
+                {post.id}
+              </Text>
+            ))}
         </Box>
       ),
     },
@@ -346,7 +361,7 @@ export const getServerSideProps = async (
   const userId = session!.getUserId();
   // TODO mpm: tie supertokens userId to dbUserId
 
-  const dbUserId = 3;
+  const dbUserId = 6;
 
   const data = await prisma.user.findUnique({
     where: {
