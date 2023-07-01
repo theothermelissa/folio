@@ -156,7 +156,9 @@ export default async function handler(
     createPost({
       userOnFeedId: userOnFeed.id,
       message: { title, content, media },
-    });
+    }).then((resultFromPrisma) =>
+      console.log("resultFromPrisma: ", resultFromPrisma)
+    );
     response.status(200).json({
       feedUrl: `${NEXT_PUBLIC_BASE_PROTOCOL}${uniqueFeedName}.${NEXT_PUBLIC_BASE_URL_PATH}/posts`,
       isNewFeed: newAccount,
