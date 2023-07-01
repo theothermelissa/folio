@@ -20,6 +20,7 @@ import { GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { EditIcon } from "@chakra-ui/icons";
+import { EditAccountName } from "../../components/editAccountName";
 
 const SIDEBAR_WIDTH = 312;
 
@@ -201,15 +202,6 @@ const Admin = ({ userData }) => {
     setCurrentSection(baseId);
   };
 
-  const onNameEditClick = async () => {
-    console.log("updating name to Supercalifragilisticexpialidocious");
-    const update = await fetch(`/api/account/${id}`, {
-      method: "PUT",
-      body: "Supercalifragilisticexpialidocious",
-    });
-    console.log("update result: ", update);
-  };
-
   const sections = [
     {
       label: "Account Information",
@@ -218,20 +210,7 @@ const Admin = ({ userData }) => {
         {
           label: "Name",
           id: "username",
-          component: (
-            <Box minHeight="500px">
-              <Text fontSize="md">
-                {name}{" "}
-                <IconButton
-                  aria-label="edit"
-                  variant="ghost"
-                  color="dimgrey"
-                  icon={<EditIcon />}
-                  onClick={onNameEditClick}
-                />
-              </Text>
-            </Box>
-          ),
+          component: <EditAccountName id={id} currentName={name} />,
         },
         {
           label: "Email",
