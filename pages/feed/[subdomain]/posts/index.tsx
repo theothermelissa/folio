@@ -41,6 +41,7 @@ export async function getStaticProps(context: GetStaticPropsContext) {
       // },
       posts: posts,
     },
+    revalidate: 5,
   };
 }
 
