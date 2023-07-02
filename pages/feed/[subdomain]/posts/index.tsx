@@ -1,10 +1,11 @@
-import { useRouter } from "next/router";
 import PostItem from "../../../../components/post-feed-item";
 import FeedLayout from "../../../../layouts/feed-layout";
 import { Box, Flex, Grid, Skeleton } from "@chakra-ui/react";
 import { SWRConfig } from "swr/_internal";
-import { GetStaticPropsContext } from "next/types";
+import { GetStaticPropsContext, InferGetStaticPropsType } from "next/types";
 import prisma from "../../../../lib/prisma";
+import useSWR from "swr";
+import { useRouter } from "next/router";
 
 export async function getStaticPaths() {
   const result = await prisma.feed.findMany({});
@@ -69,26 +70,46 @@ const PostsLoading = ({ numberSkeletons }) => {
   }
   return <Grid>{fakePosts.map((p) => p)}</Grid>;
 };
+const url = "/api/posts";
 
-const Posts = (props) => {
-  const { fallback, posts } = props;
+type FetchConfig = {
+  headers: {
+    "x-subdomain": string;
+  };
+};
+const fetcher = (url: string, config: FetchConfig) =>
+  fetch(url, config).then((res) => res.json());
+
+const Posts = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
+  const router = useRouter();
+  const { subdomain } = router.query;
+  const { data } = useSWR(url, () => fetcher(url, fetcherConfig), {
+    fallbackData: props,
+    refreshInterval: 30000,
+  });
+
+  const fetcherConfig = {
+    headers: {
+      "x-subdomain": subdomain.toString(),
+    },
+  };
+
+  const { fallback, posts } = data;
 
   return (
-    <SWRConfig value={fallback}>
-      <Box
-        padding={0}
-        w="100%"
-        mx="auto"
-        sx={{ columnCount: [1, 2, 3, 4, 5], columnGap: "12px" }}
-        margin="0px 16px"
-      >
-        {posts && posts.length > 0 ? (
-          posts.map((post) => <PostItem key={post.id} post={post} />)
-        ) : (
-          <PostsLoading numberSkeletons={13} />
-        )}
-      </Box>
-    </SWRConfig>
+    <Box
+      padding={0}
+      w="100%"
+      mx="auto"
+      sx={{ columnCount: [1, 2, 3, 4, 5], columnGap: "12px" }}
+      margin="0px 16px"
+    >
+      {posts && posts.length > 0 ? (
+        posts.map((post) => <PostItem key={post.id} post={post} />)
+      ) : (
+        <PostsLoading numberSkeletons={13} />
+      )}
+    </Box>
   );
 };
 
