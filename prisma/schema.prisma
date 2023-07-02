@@ -74,4 +74,5 @@ model Post {
   media         String[] @default([])
   feed          Feed?    @relation(fields: [feedId], references: [id])
   feedId        Int?
+  textMessageId String?  @unique
 }

@@ -86,6 +86,7 @@ async function getUserOnFeed(props: FeedProps) {
 
 type PostProps = {
   userOnFeedId: number;
+  textMessageId?: string;
   message: {
     title: string;
     content: string;
@@ -138,28 +139,70 @@ export default async function handler(
   response: NextApiResponse
 ) {
   console.log("request.body in handler: ", request.body);
-  const { title, date, author, to, content, media } = await JSON.parse(
-    request.body
-  );
-  if (!author || !to) {
-    return response.status(400).json({ message: "Missing required fields" });
+  if (request.method === "POST") {
+    const { title, date, author, to, content, media, textMessageId } =
+      await JSON.parse(request.body);
+    if (!author || !to) {
+      return response.status(400).json({ message: "Missing required fields" });
+    }
+
+    const userOnFeed = await getUserOnFeed({ to, from: author });
+    console.log("userOnFeed in handler: ", userOnFeed);
+
+    try {
+      const resultFromPrisma = await createPost({
+        userOnFeedId: userOnFeed.id,
+        textMessageId: textMessageId,
+        message: { title, content, media },
+      });
+      console.log("resultFromPrisma in handler: ", resultFromPrisma);
+      response.status(200).json({
+        feedUrl: `${NEXT_PUBLIC_BASE_PROTOCOL}${uniqueFeedName}.${NEXT_PUBLIC_BASE_URL_PATH}/posts`,
+        isNewFeed: newAccount,
+      });
+    } catch (error) {
+      console.error("Unexpected error when posting: ", error);
+      response.status(500).json({ message: error });
+    }
   }
+  if (request.method === "PATCH") {
+    const { textMessageId, content, title, media } = await JSON.parse(
+      request.body
+    );
+    if (!textMessageId) {
+      return response.status(400).json({ message: "Missing textMessageId" });
+    }
 
-  const userOnFeed = await getUserOnFeed({ to, from: author });
-  console.log("userOnFeed in handler: ", userOnFeed);
-
-  try {
-    const resultFromPrisma = await createPost({
-      userOnFeedId: userOnFeed.id,
-      message: { title, content, media },
+    const existingMessage = await prisma?.post.findUnique({
+      where: {
+        textMessageId: textMessageId,
+      },
     });
-    console.log("resultFromPrisma in handler: ", resultFromPrisma);
-    response.status(200).json({
-      feedUrl: `${NEXT_PUBLIC_BASE_PROTOCOL}${uniqueFeedName}.${NEXT_PUBLIC_BASE_URL_PATH}/posts`,
-      isNewFeed: newAccount,
-    });
-  } catch (error) {
-    console.error("Unexpected error when posting: ", error);
-    response.status(500).json({ message: error });
+    if (!existingMessage) {
+      throw new Error("No message found with that textMessageId");
+    }
+    try {
+      const updateMessage = await prisma?.post.update({
+        where: {
+          textMessageId: textMessageId,
+        },
+        data: {
+          content: content || existingMessage.content,
+          title: title || existingMessage.title,
+          media: [...existingMessage.media, ...media],
+        },
+      });
+      response
+        .status(200)
+        .json({ message: "successfully updated message: ", updateMessage });
+    } catch (error) {
+      console.error(
+        "Unexpected error when updating ",
+        textMessageId,
+        ". Error: ",
+        error
+      );
+      response.status(500).json({ message: error });
+    }
   }
 }
