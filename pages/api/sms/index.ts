@@ -4,6 +4,8 @@ import { generateNewFeedName } from "../../../lib/getSubdomain";
 
 const { NEXT_PUBLIC_BASE_URL_PATH, NEXT_PUBLIC_BASE_PROTOCOL } = process.env;
 
+// successful test body (including wrapping quotes):  "{\"author\": \"+14056403957\",\"to\": \"+14406936546\",\"content\": \"bar\",\"date\": \"2023-07-02T14:53:23.195Z\"}"
+
 type FeedProps = {
   to: string;
   from: string;
@@ -93,6 +95,12 @@ type PostProps = {
 
 async function createPost(props: PostProps) {
   const { userOnFeedId, message } = props;
+  console.log(
+    "creating post with message: ",
+    message,
+    " and userOnFeedId: ",
+    userOnFeedId
+  );
 
   const userOnFeed = await prisma?.usersOnFeeds.findUnique({
     where: {
@@ -100,30 +108,29 @@ async function createPost(props: PostProps) {
     },
   });
 
-  try {
-    await prisma?.post.create({
-      data: {
-        title: message.title,
-        publishedDate: new Date(),
-        content: message.content,
-        media: message.media,
-        feed: {
-          connect: {
-            id: userOnFeed.feedId,
-          },
-        },
-        author: {
-          connect: {
-            id: userOnFeed.userId,
-          },
+  console.log("full userOnFeed: ", userOnFeed);
+
+  const newPost = await prisma?.post.create({
+    data: {
+      title: message.title,
+      publishedDate: new Date(),
+      content: message.content,
+      media: message.media,
+      feed: {
+        connect: {
+          id: userOnFeed.feedId,
         },
       },
-    });
-    console.log("Feed: ", uniqueFeedName, " isNew: ", newAccount);
-  } catch (error) {
-    console.error("error creating post: ", error);
-  }
-  //   return newPost;
+      author: {
+        connect: {
+          id: userOnFeed.userId,
+        },
+      },
+    },
+  });
+  console.log("newPost: ", newPost);
+  console.log("Feed: ", uniqueFeedName, " isNew: ", newAccount);
+  return newPost;
 }
 
 export default async function handler(
@@ -134,6 +141,9 @@ export default async function handler(
   const { title, date, author, to, content, media } = await JSON.parse(
     request.body
   );
+  if (!author || !to) {
+    return response.status(400).json({ message: "Missing required fields" });
+  }
 
   console.log(
     "received request: ",
