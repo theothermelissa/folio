@@ -137,7 +137,7 @@ export default async function handler(
   request: NextApiRequest,
   response: NextApiResponse
 ) {
-  console.log("request.body: ", request.body);
+  console.log("request.body in handler: ", request.body);
   const { title, date, author, to, content, media } = await JSON.parse(
     request.body
   );
@@ -145,30 +145,15 @@ export default async function handler(
     return response.status(400).json({ message: "Missing required fields" });
   }
 
-  console.log(
-    "received request: ",
-    title,
-    ", ",
-    date,
-    ", ",
-    author,
-    ", ",
-    to,
-    ", ",
-    content,
-    ", ",
-    media
-  );
-
   const userOnFeed = await getUserOnFeed({ to, from: author });
+  console.log("userOnFeed in handler: ", userOnFeed);
 
   try {
-    createPost({
+    const resultFromPrisma = await createPost({
       userOnFeedId: userOnFeed.id,
       message: { title, content, media },
-    }).then((resultFromPrisma) =>
-      console.log("resultFromPrisma: ", resultFromPrisma)
-    );
+    });
+    console.log("resultFromPrisma in handler: ", resultFromPrisma);
     response.status(200).json({
       feedUrl: `${NEXT_PUBLIC_BASE_PROTOCOL}${uniqueFeedName}.${NEXT_PUBLIC_BASE_URL_PATH}/posts`,
       isNewFeed: newAccount,
