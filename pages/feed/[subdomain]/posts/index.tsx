@@ -85,7 +85,7 @@ const Posts = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { subdomain } = router.query;
   const { data } = useSWR(url, () => fetcher(url, fetcherConfig), {
     fallbackData: props,
-    refreshInterval: 30000,
+    refreshInterval: 5000,
   });
 
   const fetcherConfig = {
