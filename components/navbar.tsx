@@ -123,7 +123,7 @@ export const NavBar = () => {
         ))}
       </NavTabs>
       <SettingsMenu>
-        {/* <ClaimFeed /> */}
+        <ClaimFeed />
         {/* <Link href={ADMIN_PATH}>
           <IconButton
             aria-label="Search database"

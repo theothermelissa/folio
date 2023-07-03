@@ -2,6 +2,7 @@ import { Button, Flex } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import Link from "next/link";
 import React from "react";
+import { ClaimFeed } from "../components/claim-feed";
 
 const Wrapper = styled(Flex)`
   height: 100vh;
@@ -34,6 +35,7 @@ export default function Home({ protocol, urlPath }) {
         </Button>
         {/* </Flex> */}
       </a>
+      <ClaimFeed />
     </Wrapper>
   );
 }
