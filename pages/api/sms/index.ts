@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next/types";
 import prisma from "../../../lib/prisma";
-import { generateNewFeedName } from "../../../lib/getSubdomain";
+import { generateNewFeedName } from "../../../lib/generateSubdomain";
 
 const { NEXT_PUBLIC_BASE_URL_PATH, NEXT_PUBLIC_BASE_PROTOCOL } = process.env;
 

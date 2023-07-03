@@ -29,7 +29,7 @@ const Sidebar = styled(Flex)`
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-start;
-  background-color: gainsboro;
+  background-color: white;
   height: 100%;
   width: ${SIDEBAR_WIDTH}px;
   min-width: ${SIDEBAR_WIDTH}px;
@@ -208,12 +208,12 @@ const Admin = ({ userData }) => {
       id: "account-information",
       subsections: [
         {
-          label: "Name",
+          label: "Your Name",
           id: "username",
           component: <EditAccountName id={id} currentName={name} />,
         },
         {
-          label: "Email",
+          label: "Your Email",
           id: "email",
           component: (
             <Text minHeight="500px" fontSize="md">

@@ -4,8 +4,9 @@ import Dashboard from "supertokens-node/recipe/dashboard";
 import { appInfo } from "./appInfo";
 import { AuthConfig } from "../interfaces";
 import Session from "supertokens-node/recipe/session";
+import { SupertokensService } from "supertokens-node/recipe/passwordless/smsdelivery";
 
-const { SUPERTOKENS_URI, SUPERTOKENS_API_KEY, NEXT_PUBLIC_BASE_URL_PATH } =
+const { SUPERTOKENS_URI, SUPERTOKENS_API_KEY, SUPERTOKENS_SMS_API_KEY } =
   process.env;
 
 export let backendConfig = (): AuthConfig => {
@@ -23,6 +24,9 @@ export let backendConfig = (): AuthConfig => {
       PasswordlessNode.init({
         contactMethod: "EMAIL_OR_PHONE",
         flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
+        smsDelivery: {
+          service: new SupertokensService(SUPERTOKENS_SMS_API_KEY),
+        },
       }),
       Session.init({
         // getTokenTransferMethod: () => "header",

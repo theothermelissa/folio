@@ -12,6 +12,49 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 
+const shouldBeUnique = (key: string) => {
+  switch (key) {
+    case "email":
+    case "subdomain":
+    case "phone":
+      return true;
+    default:
+      return false;
+  }
+};
+
+const updateAccountValue = async (key: string, value: string) => {
+  console.log("updating ", key, " value to ", value);
+
+  const result = await fetch(`/api/account/${key}`, {
+    method: "PUT",
+    body: `{ "${key}": "${value}", "shouldBeUnique": "${shouldBeUnique(
+      key
+    )}" }`,
+  });
+  console.log("result of update call is ", result);
+  return { isFinishedEditing: result.status === 200 };
+};
+
+const EditAccountValue = ({ key, currentValue }) => {
+  const [value, setValue] = useState(currentValue);
+  const [editing, setEditing] = useState(false);
+
+  const onEditClick = () => {
+    setEditing(true);
+  };
+
+  const handleSubmit = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    setValue(value);
+    console.log("new value for ", key, " should change to ", value);
+    updateAccountValue(key, value).then(({ isFinishedEditing }) => {
+      console.log("isFinishedEditing is ", isFinishedEditing);
+      setEditing(!isFinishedEditing);
+    });
+  };
+};
+
 export const EditAccountName = ({ id, currentName }) => {
   const [name, setName] = useState(currentName);
   const [isEditing, setIsEditing] = useState(false);

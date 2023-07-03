@@ -8,9 +8,17 @@ import styled from "@emotion/styled";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { HamburgerIcon, SettingsIcon } from "@chakra-ui/icons";
-import { Flex, Heading, IconButton, Skeleton, Text } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  Heading,
+  IconButton,
+  Skeleton,
+  Text,
+} from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import Loading from "./loading";
+import { ClaimFeed } from "./claim-feed";
 
 const TOP_Z_INDEX = 999;
 
@@ -23,7 +31,7 @@ type TabProps = {
 const Nav = styled(Flex)`
   position: fixed;
   justify-content: space-between;
-  background-color: ghostwhite;
+  background-color: white;
   width: 100%;
   height: ${NAVBAR_HEIGHT}px;
   align-items: center;
@@ -98,8 +106,12 @@ export const NavBar = () => {
   const terminalPath = pathname.replace("/feed/[subdomain]", "");
   const currentPath = terminalPath.length > 0 ? terminalPath : "/";
 
+  const handleClaimRequest = () => {
+    const redirectUrl = `${window.location.origin}/api/auth/login`;
+  };
+
   return (
-    <Nav as="header" boxShadow="base">
+    <Nav as="header" boxShadow="sm">
       <PageName name={subdomain} />
       <NavTabs>
         {NAV_LINK_INDICES.map(({ path, name }) => (
@@ -111,14 +123,15 @@ export const NavBar = () => {
         ))}
       </NavTabs>
       <SettingsMenu>
-        <Link href={ADMIN_PATH}>
+        {/* <ClaimFeed /> */}
+        {/* <Link href={ADMIN_PATH}>
           <IconButton
             aria-label="Search database"
             size="sm"
             variant="ghost"
             icon={<HamburgerIcon margin="3px" boxSize={4} color="gainsboro" />}
           />
-        </Link>
+        </Link> */}
       </SettingsMenu>
     </Nav>
   );

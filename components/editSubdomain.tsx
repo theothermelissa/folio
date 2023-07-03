@@ -12,29 +12,34 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 
-export const EditAccountName = ({ id, currentName }) => {
-  const [name, setName] = useState(currentName);
+export const EditAccountSubdomain = ({ id, currentSubdomain }) => {
+  const [desiredSubdomain, setDesiredSubdomain] = useState(currentSubdomain);
   const [isEditing, setIsEditing] = useState(false);
 
-  const onNameEditClick = () => {
+  const onSubdomainEditClick = () => {
     setIsEditing(true);
   };
 
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    setName(name);
-    console.log("new name for user ", id, " should change to ", name);
-    onChangeName().then(({ isFinishedEditing }) => {
+    setDesiredSubdomain(desiredSubdomain);
+    console.log(
+      "new Subdomain for user ",
+      id,
+      " should change to ",
+      desiredSubdomain
+    );
+    onChangeSubdomain().then(({ isFinishedEditing }) => {
       console.log("isFinishedEditing is ", isFinishedEditing);
       setIsEditing(!isFinishedEditing);
     });
   };
 
-  const onChangeName = async () => {
-    console.log("updating name to ", name);
+  const onChangeSubdomain = async () => {
+    console.log("updating Subdomain to ", desiredSubdomain);
     const result = await fetch(`/api/account/${id}`, {
       method: "PUT",
-      body: name,
+      body: desiredSubdomain,
     });
     console.log("result of update call is ", result);
     return { isFinishedEditing: result.status === 200 };
@@ -45,27 +50,29 @@ export const EditAccountName = ({ id, currentName }) => {
       {isEditing ? (
         <form onSubmit={handleSubmit}>
           <FormControl>
-            <FormLabel>Name</FormLabel>
+            <FormLabel>Subdomain Name</FormLabel>
             <Input
               type="text"
-              placeholder={currentName}
+              placeholder={currentSubdomain}
               onChange={(e: React.FormEvent<HTMLInputElement>) =>
-                setName(e.currentTarget.value)
+                setDesiredSubdomain(e.currentTarget.value)
               }
             />
-            <FormHelperText>The question is, 🦉 whooo are YOU?</FormHelperText>
+            <FormHelperText>
+              What would you like to name your channel?
+            </FormHelperText>
           </FormControl>
           <Button type="submit">Submit</Button>
         </form>
       ) : (
         <Text fontSize="md">
-          {name}{" "}
+          {desiredSubdomain}{" "}
           <IconButton
             aria-label="edit"
             variant="ghost"
             color="dimgrey"
             icon={<EditIcon />}
-            onClick={onNameEditClick}
+            onClick={onSubdomainEditClick}
           />
         </Text>
       )}
