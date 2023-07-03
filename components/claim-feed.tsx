@@ -3,6 +3,10 @@ import styled from "@emotion/styled";
 import { useRouter } from "next/router";
 import { ChangeEvent, useEffect, useState } from "react";
 import { handleOTPInput, sendOTP } from "../lib/auth";
+import { GetStaticPropsContext } from "next";
+import { getUserFromSubdomain } from "../lib/userFromSubdomain";
+import { FetchConfig } from "../pages/feed/[subdomain]/posts";
+import useSWR from "swr";
 
 const Wrapper = styled(Flex)`
   flex-direction: row;
@@ -17,11 +21,25 @@ const CodeInput = styled(Input)`
   width: 250px;
 `;
 
+const fetcher = (url: string, config: FetchConfig) =>
+  fetch(url, config).then((res) => res.json());
+
 export const ClaimFeed = () => {
   const router = useRouter();
   const { subdomain } = router.query;
-  //   console.log("router.query in claim-feed: ", router.query);
-  const [codeRequested, setCodeRequested] = useState(false);
+  const url = "/api/account/phone";
+
+  // const { data, isLoading, error } = useSWR("/api/account/phone", fetcher);
+
+  const { data, isLoading } = useSWR(url, () => fetcher(url, fetcherConfig));
+
+  const fetcherConfig = {
+    headers: {
+      "x-subdomain": subdomain?.toString(),
+    },
+  };
+
+  // const [codeRequested, setCodeRequested] = useState(false);
   const [showCodeInput, setShowCodeInput] = useState(false);
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
@@ -64,11 +82,14 @@ export const ClaimFeed = () => {
 
   async function onOtpRequest() {
     setLoading(true);
-    const result = await sendOTP("+12567106534");
-    console.log("result of sendOTP: ", result);
-    if (result && result.status === "OK") {
-      setLoading(false);
-      setShowCodeInput(true);
+    if (!isLoading) {
+      const { phone } = data;
+      const result = await sendOTP(phone);
+      console.log("result of sendOTP: ", result);
+      if (result && result.status === "OK") {
+        setLoading(false);
+        setShowCodeInput(true);
+      }
     }
   }
 
