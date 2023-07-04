@@ -1,8 +1,8 @@
 import Protected from "../../components/protected-page";
-import Session from "supertokens-node/recipe/session";
+import ServerSession from "supertokens-node/recipe/session";
 import supertokensNode from "supertokens-node";
 import { backendConfig } from "../../config/backendConfig";
-import { signOut } from "supertokens-auth-react/recipe/emailpassword";
+import { signOut } from "supertokens-auth-react/recipe/passwordless";
 import PageLayout from "../../layouts/page-layout";
 import {
   Box,
@@ -21,6 +21,15 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { EditIcon } from "@chakra-ui/icons";
 import { EditAccountName } from "../../components/editAccountName";
+import Session from "supertokens-web-js/recipe/session";
+
+async function doesSessionExist() {
+  if (await Session.doesSessionExist()) {
+    // user is logged in
+  } else {
+    // user has not logged in yet
+  }
+}
 
 const SIDEBAR_WIDTH = 312;
 
@@ -323,15 +332,15 @@ export const getServerSideProps = async (
   supertokensNode.init(backendConfig());
   let session;
   try {
-    session = await Session.getSession(context.req, context.res, {
+    session = await ServerSession.getSession(context.req, context.res, {
       overrideGlobalClaimValidators: () => {
         return [];
       },
     });
   } catch (err: any) {
-    if (err.type === Session.Error.TRY_REFRESH_TOKEN) {
+    if (err.type === ServerSession.Error.TRY_REFRESH_TOKEN) {
       return { props: { fromSupertokens: "needs-refresh" } };
-    } else if (err.type === Session.Error.UNAUTHORISED) {
+    } else if (err.type === ServerSession.Error.UNAUTHORISED) {
       return { props: { fromSupertokens: "needs-refresh" } };
     }
     throw new Error(err);
@@ -340,7 +349,7 @@ export const getServerSideProps = async (
   // >>> TODO mpm: tie supertokens userId to dbUserId
   // const userId = session!.getUserId();
 
-  const dbUserId = 6;
+  const dbUserId = 1;
 
   const data = await prisma.user.findUnique({
     where: {

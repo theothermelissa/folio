@@ -5,6 +5,7 @@ import { TypeInput } from "supertokens-node/types";
 import { SupertokensService } from "supertokens-node/recipe/passwordless/smsdelivery";
 import { getUserFromSubdomain } from "../lib/userFromSubdomain";
 import Dashboard from "supertokens-node/recipe/dashboard";
+import Session from "supertokens-node/recipe/session";
 
 const { SUPERTOKENS_URI, SUPERTOKENS_API_KEY, SUPERTOKENS_SMS_API_KEY } =
   process.env;
@@ -38,6 +39,7 @@ export const backendConfig = (): TypeInput => {
                 if (originalImplementation.consumeCodePOST === undefined) {
                   throw new Error("Should never come here");
                 }
+
                 // we should already have a session here since this is called
                 // after phone password login
                 // let session = await SessionNode.getSession(
@@ -57,9 +59,19 @@ export const backendConfig = (): TypeInput => {
                 let resp = await originalImplementation.consumeCodePOST(input);
 
                 if (resp.status === "OK") {
+                  console.log("resp: ", resp);
+                  const { user } = resp;
+                  const updateUser = await prisma.user.update({
+                    where: {
+                      phone: user.phoneNumber,
+                    },
+                    data: {
+                      authId: user.id,
+                    },
+                  });
+                  console.log("updateUser:", updateUser);
+                  return resp;
                   // OTP verification was successful.
-                  console.log("user phone verified!");
-
                   //TODO: save the user's authId to their User record
                 }
 

@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import SuperTokens from "supertokens-auth-react";
 import { canHandleRoute, getRoutingComponent } from "supertokens-auth-react/ui";
 import { PreBuiltUIList } from "../../config/frontendConfig";
+import { redirectToAuth } from "supertokens-auth-react";
 
 const SuperTokensComponentNoSSR = dynamic<{}>(
   new Promise((res) => res(() => getRoutingComponent(PreBuiltUIList))),
@@ -16,9 +17,7 @@ const SuperTokensComponentNoSSR = dynamic<{}>(
 export default function Auth(): JSX.Element {
   useEffect(() => {
     if (canHandleRoute(PreBuiltUIList) === false) {
-      SuperTokens.redirectToAuth({
-        redirectBack: false,
-      });
+      redirectToAuth();
     }
   }, []);
 
@@ -26,11 +25,11 @@ export default function Auth(): JSX.Element {
     <div className={styles.container}>
       <Head>
         <title>SuperTokens 💫</title>
-        <link
+        {/* <link
           href="//fonts.googleapis.com/css2?family=Rubik:wght@400&display=swap"
           rel="stylesheet"
           type="text/css"
-        />
+        /> */}
         <link rel="icon" href="/favicon.ico" />
       </Head>
 

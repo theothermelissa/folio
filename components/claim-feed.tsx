@@ -55,7 +55,7 @@ export const ClaimFeed = () => {
 
   const handleSubmitCode = async () => {
     handleOTPInput(code).then((result) => {
-      console.log("result of handleOTPInput: ", result);
+      // console.log("result of handleOTPInput: ", result);
       setLoading(false);
       setCode("");
     });
