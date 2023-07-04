@@ -194,6 +194,8 @@ const AdminBody = ({ sections, onScrollIntoView }) => {
 
 const Admin = ({ userData }) => {
   const [currentSection, setCurrentSection] = useState("");
+  if (!userData) return <div>Loading...</div>;
+
   const { id, email, name, image, projects, posts, phone, ownedFeeds, feeds } =
     userData;
 
@@ -335,8 +337,8 @@ export const getServerSideProps = async (
     throw new Error(err);
   }
 
-  const userId = session!.getUserId();
-  // TODO mpm: tie supertokens userId to dbUserId
+  // >>> TODO mpm: tie supertokens userId to dbUserId
+  // const userId = session!.getUserId();
 
   const dbUserId = 6;
 
@@ -352,6 +354,7 @@ export const getServerSideProps = async (
     },
   });
   const userData = JSON.parse(JSON.stringify(data));
+
   return {
     props: {
       userData: userData,

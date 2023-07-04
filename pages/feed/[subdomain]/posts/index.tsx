@@ -32,6 +32,7 @@ export async function getStaticProps(context: GetStaticPropsContext) {
       posts: true,
     },
   });
+  console.log("result of getting posts: ", result);
 
   const posts = JSON.parse(JSON.stringify(result.posts));
 

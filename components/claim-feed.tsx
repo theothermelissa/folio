@@ -3,8 +3,6 @@ import styled from "@emotion/styled";
 import { useRouter } from "next/router";
 import { ChangeEvent, useEffect, useState } from "react";
 import { handleOTPInput, sendOTP } from "../lib/auth";
-import { GetStaticPropsContext } from "next";
-import { getUserFromSubdomain } from "../lib/userFromSubdomain";
 import { FetchConfig } from "../pages/feed/[subdomain]/posts";
 import useSWR from "swr";
 
@@ -27,6 +25,7 @@ const fetcher = (url: string, config: FetchConfig) =>
 export const ClaimFeed = () => {
   const router = useRouter();
   const { subdomain } = router.query;
+  // const url = "/api/account/phone";
   const url = "/api/account/phone";
 
   // const { data, isLoading, error } = useSWR("/api/account/phone", fetcher);
@@ -55,7 +54,8 @@ export const ClaimFeed = () => {
   }, [code]);
 
   const handleSubmitCode = async () => {
-    handleOTPInput(code).then(() => {
+    handleOTPInput(code).then((result) => {
+      console.log("result of handleOTPInput: ", result);
       setLoading(false);
       setCode("");
     });

@@ -17,7 +17,7 @@ export const frontendConfig = () => {
 };
 
 // import PasswordlessReact from "supertokens-auth-react/recipe/passwordless";
-// import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
+import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 // import { appInfo } from "./appInfo";
 // import Router from "next/router";
 // import Session from "supertokens-auth-react/recipe/session";
@@ -68,8 +68,8 @@ export const frontendConfig = () => {
 //   };
 // };
 
-// export const recipeDetails = {
-//   docsLink: "https://supertokens.com/docs/passwordless/introduction",
-// };
+export const recipeDetails = {
+  docsLink: "https://supertokens.com/docs/passwordless/introduction",
+};
 
-// export const PreBuiltUIList = [PasswordlessPreBuiltUI];
+export const PreBuiltUIList = [PasswordlessPreBuiltUI];

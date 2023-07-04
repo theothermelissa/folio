@@ -4,6 +4,7 @@ import { appInfo } from "./appInfo";
 import { TypeInput } from "supertokens-node/types";
 import { SupertokensService } from "supertokens-node/recipe/passwordless/smsdelivery";
 import { getUserFromSubdomain } from "../lib/userFromSubdomain";
+import Dashboard from "supertokens-node/recipe/dashboard";
 
 const { SUPERTOKENS_URI, SUPERTOKENS_API_KEY, SUPERTOKENS_SMS_API_KEY } =
   process.env;
@@ -101,6 +102,7 @@ export const backendConfig = (): TypeInput => {
         },
       }),
       SessionNode.init(),
+      Dashboard.init(),
     ],
     isInServerlessEnv: true,
   };
@@ -145,3 +147,5 @@ export const backendConfig = (): TypeInput => {
 //     isInServerlessEnv: true,
 //   };
 // };
+
+// curl --location --request POST 'https://dev-193c456113b611eeb7cd233393f733e9-us-east-1.aws.supertokens.io:3572/recipe/dashboard/user' \ --header 'rid: dashboard' \ --header 'api-key: MLudOVfGZdJUskFvr6jhyLWiDbM3Ff' \ --header 'Content-Type: application/json' \ --data-raw '{"email": "melissapearlmorgan@gmail.com","password": “$itting0n1Rock"}'

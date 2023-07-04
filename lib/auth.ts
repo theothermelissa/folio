@@ -17,7 +17,8 @@ export async function handleOTPInput(otp: string) {
       } else {
         // user sign in success
       }
-      window.location.assign("/home");
+      console.log("response: ", response);
+      return response;
     } else if (response.status === "INCORRECT_USER_INPUT_CODE_ERROR") {
       // the user entered an invalid OTP
       window.alert(

@@ -18,6 +18,10 @@ export default async function handler(
 ) {
   const subdomain = request.headers["x-subdomain"];
   const user = await getUserFromSubdomain(subdomain.toString());
+  if (!user) {
+    response.status(404).json({ error: "No user found" });
+    return;
+  }
   console.log("user: ", user);
   const { phone } = user;
   response.status(200).json({ phone });
