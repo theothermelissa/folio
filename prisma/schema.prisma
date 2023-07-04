@@ -16,18 +16,11 @@ model User {
   name       String?
   image      String?
   phone      String?        @unique
-  AuthUser   AuthOnUsers[]
+  authId     String?        @unique
   ownedFeeds Feed[]
   posts      Post[]
   projects   Project[]
   feeds      UsersOnFeeds[]
-}
-
-model AuthOnUsers {
-  authId    String    @unique
-  userId    Int
-  user      User      @relation(fields: [userId], references: [id])
-  lastLogin DateTime?
 }
 
 model Feed {

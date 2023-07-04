@@ -82,15 +82,18 @@ export const ClaimFeed = () => {
 
   async function onOtpRequest() {
     setLoading(true);
-    if (!isLoading) {
-      const { phone } = data;
-      const result = await sendOTP(phone);
-      console.log("result of sendOTP: ", result);
-      if (result && result.status === "OK") {
-        setLoading(false);
-        setShowCodeInput(true);
-      }
+    // if (!isLoading) {
+    //   const { phone } = data;
+    const result = await sendOTP(
+      // phone
+      "+12567106534"
+    );
+    console.log("result of sendOTP: ", result);
+    if (result && result.status === "OK") {
+      setLoading(false);
+      setShowCodeInput(true);
     }
+    // }
   }
 
   return (

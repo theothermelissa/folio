@@ -22,48 +22,52 @@ export const backendConfig = (): TypeInput => {
       PasswordlessNode.init({
         flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
         contactMethod: "EMAIL_OR_PHONE",
-        // override: {
-        //   apis: (originalImplementation) => {
-        //     return {
-        //       ...originalImplementation,
-        //       createCodePOST: async function (input: any) {
-        //         if ("subdomain" in input) {
-        //           const ownerPhone = await getUserFromSubdomain(
-        //             input.subdomain
-        //           );
-        //           if (ownerPhone) {
-        //             input.phoneNumber = ownerPhone;
-        //           }
-        //         }
-        //         if ("email" in input) {
-        //           let existingUser = await PasswordlessNode.getUserByEmail({
-        //             email: input.email,
-        //           });
-        //           if (existingUser === undefined) {
-        //             // this is sign up attempt
-        //             return {
-        //               status: "GENERAL_ERROR",
-        //               message: "Sign up disabled. Please contact the admin.",
-        //             };
-        //           }
-        //         } else {
-        //           let existingUser =
-        //             await PasswordlessNode.getUserByPhoneNumber({
-        //               phoneNumber: input.phoneNumber,
-        //             });
-        //           if (existingUser === undefined) {
-        //             // this is sign up attempt
-        //             return {
-        //               status: "GENERAL_ERROR",
-        //               message: "Sign up disabled. Please contact the admin.",
-        //             };
-        //           }
-        //         }
-        //         return await originalImplementation.createCodePOST!(input);
-        //       },
-        //     };
-        //   },
-        // },
+        override: {
+          apis: (originalImplementation) => {
+            return {
+              ...originalImplementation,
+              createCodePOST: async function (input) {
+                if (originalImplementation.createCodePOST === undefined) {
+                  throw new Error("Should never come here");
+                }
+                console.log("first, calling createCodePOST");
+                return originalImplementation.createCodePOST(input);
+              },
+              consumeCodePOST: async function (input) {
+                console.log("next, calling customCodePOST");
+                if (originalImplementation.consumeCodePOST === undefined) {
+                  throw new Error("Should never come here");
+                }
+                // we should already have a session here since this is called
+                // after phone password login
+                // let session = await SessionNode.getSession(
+                //   input.options.req,
+                //   input.options.res,
+                //   {
+                //     overrideGlobalClaimValidators: () => [],
+                //   }
+                // );
+                // if (session === undefined) {
+                //   throw new Error("Should never come here");
+                // }
+
+                // we add the session to the user context so that the createNewSession
+                // function doesn't create a new session
+                // input.userContext.session = session;
+                let resp = await originalImplementation.consumeCodePOST(input);
+
+                if (resp.status === "OK") {
+                  // OTP verification was successful.
+                  console.log("user phone verified!");
+
+                  //TODO: save the user's authId to their User record
+                }
+
+                return resp;
+              },
+            };
+          },
+        },
         smsDelivery: {
           service: new SupertokensService(SUPERTOKENS_SMS_API_KEY),
           // override: (originalImplementation) => {
