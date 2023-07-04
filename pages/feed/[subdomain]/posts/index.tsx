@@ -24,7 +24,7 @@ export async function getStaticProps(context: GetStaticPropsContext) {
   const {
     params: { subdomain },
   } = context;
-  const result = await prisma.feed.findUnique({
+  const result = await prisma?.feed.findUnique({
     where: {
       subdomain: subdomain.toString(),
     },
