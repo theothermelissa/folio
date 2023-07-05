@@ -1,4 +1,4 @@
-import { Post } from "../types";
+import { Post } from "../../types";
 import { Grid } from "@chakra-ui/react";
 import { PostCard } from "./post-card";
 

@@ -4,24 +4,15 @@ import supertokensNode from "supertokens-node";
 import { backendConfig } from "../../config/backendConfig";
 import { signOut } from "supertokens-auth-react/recipe/passwordless";
 import PageLayout from "../../layouts/page-layout";
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-  IconButton,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Stack, Text } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import { NAVBAR_HEIGHT } from "../../constants";
 import prisma from "../../lib/prisma";
 import { GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { EditIcon } from "@chakra-ui/icons";
-import { EditAccountName } from "../../components/editAccountName";
 import Session from "supertokens-web-js/recipe/session";
+import { EditAccountValue } from "../../components/admin/editAccountValue";
 
 async function doesSessionExist() {
   if (await Session.doesSessionExist()) {
@@ -221,24 +212,35 @@ const Admin = ({ userData }) => {
         {
           label: "Your Name",
           id: "username",
-          component: <EditAccountName id={id} currentName={name} />,
+          component: (
+            <EditAccountValue
+              userId={id}
+              keyToUpdate={"name"}
+              currentValue={name || ""}
+            />
+          ),
         },
         {
           label: "Your Email",
           id: "email",
           component: (
-            <Text minHeight="500px" fontSize="md">
-              {email}
-            </Text>
+            <EditAccountValue
+              userId={id}
+              keyToUpdate={"email"}
+              currentValue={email || ""}
+            />
           ),
         },
+        // TODO: disable phone number edit until user has verified email
         {
           label: "Phone",
           id: "phone",
           component: (
-            <Text minHeight="500px" fontSize="md">
-              {phone}
-            </Text>
+            <EditAccountValue
+              userId={id}
+              keyToUpdate={"phone"}
+              currentValue={phone || ""}
+            />
           ),
         },
       ],
@@ -311,12 +313,12 @@ const Admin = ({ userData }) => {
   ];
 
   return (
-    <Protected>
-      <View>
-        <AdminSidebar sections={sections} currentSection={currentSection} />
-        <AdminBody sections={sections} onScrollIntoView={onScrollIntoView} />
-      </View>
-    </Protected>
+    // <Protected>
+    <View>
+      <AdminSidebar sections={sections} currentSection={currentSection} />
+      <AdminBody sections={sections} onScrollIntoView={onScrollIntoView} />
+    </View>
+    // </Protected>
   );
 };
 
@@ -329,31 +331,35 @@ export default Admin;
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  supertokensNode.init(backendConfig());
-  let session;
-  try {
-    session = await ServerSession.getSession(context.req, context.res, {
-      overrideGlobalClaimValidators: () => {
-        return [];
-      },
-    });
-  } catch (err: any) {
-    if (err.type === ServerSession.Error.TRY_REFRESH_TOKEN) {
-      return { props: { fromSupertokens: "needs-refresh" } };
-    } else if (err.type === ServerSession.Error.UNAUTHORISED) {
-      return { props: { fromSupertokens: "needs-refresh" } };
-    }
-    throw new Error(err);
-  }
+  console.log("calling serverSideProps");
 
-  // >>> TODO mpm: tie supertokens userId to dbUserId
-  // const userId = session!.getUserId();
+  // supertokensNode.init(backendConfig());
+  // let session: ServerSession.SessionContainer;
 
-  const dbUserId = 1;
+  // try {
+  //   session = await ServerSession.getSession(context.req, context.res, {
+  //     overrideGlobalClaimValidators: () => {
+  //       return [];
+  //     },
+  //   });
+  //   console.log("session inside try/catch: ", session);
+  // } catch (err: any) {
+  //   console.log("error in serverSideProps: ", err.type, " ", err.message);
+  //   if (err.type === ServerSession.Error.TRY_REFRESH_TOKEN) {
+  //     return { props: { fromSupertokens: "needs-refresh" } };
+  //   } else if (err.type === ServerSession.Error.UNAUTHORISED) {
+  //     return { props: { fromSupertokens: "needs-refresh" } };
+  //   }
+  //   throw new Error(err);
+  // }
+
+  // const userId: string = session!.getUserId();
+  const userId = 1;
+  console.log("userId in admin serverSideProps: ", userId);
 
   const data = await prisma.user.findUnique({
     where: {
-      id: dbUserId,
+      id: userId,
     },
     include: {
       feeds: true,
@@ -362,6 +368,7 @@ export const getServerSideProps = async (
       projects: true,
     },
   });
+  console.log("userData: ", JSON.parse(JSON.stringify(data)));
   const userData = JSON.parse(JSON.stringify(data));
 
   return {

@@ -13,9 +13,11 @@ export async function handleOTPInput(otp: string) {
 
     if (response.status === "OK") {
       if (response.createdNewUser) {
-        // user sign up success
+        console.log("Welcome to Folio!");
+        // user sign up success -- trigger onboarding
       } else {
-        // user sign in success
+        console.log("Welcome back!");
+        // user sign in success -- leave them alone
       }
       console.log("response: ", response);
       return response;

@@ -1,4 +1,4 @@
-import PostItem from "../../../../components/post-feed-item";
+import PostItem from "../../../../components/posts/post-feed-item";
 import FeedLayout from "../../../../layouts/feed-layout";
 import { Box, Flex, Grid, Skeleton } from "@chakra-ui/react";
 import { SWRConfig } from "swr/_internal";

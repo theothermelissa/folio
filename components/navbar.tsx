@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import Loading from "./loading";
-import { ClaimFeed } from "./claim-feed";
+import { ClaimFeed } from "./admin/claim-feed";
 
 const TOP_Z_INDEX = 999;
 
@@ -123,7 +123,7 @@ export const NavBar = () => {
         ))}
       </NavTabs>
       <SettingsMenu>
-        <ClaimFeed />
+        {<ClaimFeed />}
         {/* <Link href={ADMIN_PATH}>
           <IconButton
             aria-label="Search database"
