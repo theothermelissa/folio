@@ -15,6 +15,6 @@
         "isolatedModules": true,
         "jsx": "preserve"
     },
-    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "interfaces.d.ts", "pages/feed/[subdomain]/projects", "pages/feed/[subdomain]", "middleware.ts", "pages/feed/[subdomain]/about", "pages/admin"],
+    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "interfaces.d.ts", "pages/feed/[subdomain]/projects", "pages/feed/[subdomain]", "middleware.ts", "pages/feed/[subdomain]/about", "pages/admin", "components/Tiptap.tsx"],
     "exclude": ["node_modules"]
 }

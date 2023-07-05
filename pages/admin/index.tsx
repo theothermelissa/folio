@@ -12,7 +12,8 @@ import { GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import Session from "supertokens-web-js/recipe/session";
-import { EditAccountValue } from "../../components/admin/editAccountValue";
+import AdminPosts from "../../components/admin/admin-posts";
+import { EditAccountValue } from "../../components/admin/EditAccountValue";
 
 async function doesSessionExist() {
   if (await Session.doesSessionExist()) {
@@ -122,8 +123,9 @@ const Section = ({ label, children, id, onScrollIntoView, isSub }) => {
     const handleScroll = () => {
       const position = sectionRef.current.getBoundingClientRect().top.toFixed();
       // if (id === "posts-section" || id === "posts") {
-      if (position < 500) {
-        if (position > 35) {
+      if (position < 65) {
+        if (position > 50) {
+          console.log(id, " position: ", position);
           onScrollIntoView(id);
         }
       }
@@ -140,7 +142,9 @@ const Section = ({ label, children, id, onScrollIntoView, isSub }) => {
   const as = () => (isSub ? "h3" : "h2");
   const size = () => (isSub ? "xl" : "2xl");
   const style = () =>
-    isSub ? { margin: "12px 0px 8px 0px" } : { margin: "50px 0px 8px 0px" };
+    isSub
+      ? { margin: "12px 0px 8px 0px" }
+      : { margin: "50px 0px 8px 0px", color: "black" };
 
   return (
     <>
@@ -256,6 +260,12 @@ const Admin = ({ userData }) => {
       ),
     },
     {
+      label: "Posts",
+      id: "posts",
+      subsections: [],
+      component: <AdminPosts posts={posts} userId={id} />,
+    },
+    {
       label: "Feeds",
       id: "feeds",
       subsections: [
@@ -294,21 +304,6 @@ const Admin = ({ userData }) => {
           ),
         },
       ],
-    },
-    {
-      label: "Posts",
-      id: "posts",
-      subsections: [],
-      component: (
-        <Box minHeight="500px">
-          {posts.length > 0 &&
-            posts.map((post) => (
-              <Text key={`post-${post.id}`} fontSize="md">
-                {post.id}
-              </Text>
-            ))}
-        </Box>
-      ),
     },
   ];
 

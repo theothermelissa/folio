@@ -64,7 +64,7 @@ export function EditAccountValue({ userId, keyToUpdate, currentValue }) {
   };
 
   return (
-    <Box minHeight="500px">
+    <Box>
       {editing ? (
         <form onSubmit={handleSubmit}>
           <FormControl>
