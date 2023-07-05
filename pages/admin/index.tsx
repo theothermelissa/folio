@@ -12,8 +12,8 @@ import { GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import Session from "supertokens-web-js/recipe/session";
-import AdminPosts from "../../components/admin/admin-posts";
-import { EditAccountValue } from "../../components/admin/EditAccountValue";
+import { EditAccountValue } from "../../components/EditAccountValue";
+import AdminPosts from "../../components/admin-posts";
 
 async function doesSessionExist() {
   if (await Session.doesSessionExist()) {

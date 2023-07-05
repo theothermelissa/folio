@@ -1,5 +1,4 @@
 import styled from "@emotion/styled";
-import { Post } from "../../types";
 import {
   Button,
   ButtonGroup,
@@ -17,8 +16,8 @@ import {
 } from "@chakra-ui/react";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { useState } from "react";
-import { lorem } from "../../lib/lorem";
-import Tiptap from "../Tiptap";
+import { Post } from "../types";
+import Tiptap from "./Tiptap";
 
 type AdminPostProps = {
   userId: number;

@@ -1,8 +1,7 @@
 import styled from "@emotion/styled";
-import { Post } from "../../types";
-import { Button, ButtonGroup, Flex, IconButton, Text } from "@chakra-ui/react";
-import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import { Flex } from "@chakra-ui/react";
 import AdminPost from "./admin-post";
+import { Post } from "../types";
 
 type AdminAllPostsProps = {
   userId: number;

@@ -2,8 +2,8 @@ import { Button, Flex, Input, Spinner } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import { useRouter } from "next/router";
 import { ChangeEvent, useEffect, useState } from "react";
-import { handleOTPInput, sendOTP } from "../../lib/auth";
-import { FetchConfig } from "../../pages/feed/[subdomain]/posts";
+import { handleOTPInput, sendOTP } from "../lib/auth";
+import { FetchConfig } from "../pages/feed/[subdomain]/posts";
 import useSWR from "swr";
 
 const Wrapper = styled(Flex)`

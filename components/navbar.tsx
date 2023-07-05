@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import Loading from "./loading";
-import { ClaimFeed } from "./admin/claim-feed";
+import { ClaimFeed } from "./admin-claim-feed";
 
 const TOP_Z_INDEX = 999;
 
