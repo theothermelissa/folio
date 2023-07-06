@@ -308,17 +308,19 @@ const Admin = ({ userData }) => {
   ];
 
   return (
-    // <Protected>
     <View>
       <AdminSidebar sections={sections} currentSection={currentSection} />
       <AdminBody sections={sections} onScrollIntoView={onScrollIntoView} />
     </View>
-    // </Protected>
   );
 };
 
 Admin.getLayout = function getLayout(page: React.ReactElement) {
-  return <PageLayout>{page}</PageLayout>;
+  return (
+    <PageLayout>
+      <Protected>{page}</Protected>
+    </PageLayout>
+  );
 };
 
 export default Admin;
@@ -328,28 +330,28 @@ export const getServerSideProps = async (
 ) => {
   console.log("calling serverSideProps");
 
-  // supertokensNode.init(backendConfig());
-  // let session: ServerSession.SessionContainer;
+  supertokensNode.init(backendConfig());
+  let session: ServerSession.SessionContainer;
 
-  // try {
-  //   session = await ServerSession.getSession(context.req, context.res, {
-  //     overrideGlobalClaimValidators: () => {
-  //       return [];
-  //     },
-  //   });
-  //   console.log("session inside try/catch: ", session);
-  // } catch (err: any) {
-  //   console.log("error in serverSideProps: ", err.type, " ", err.message);
-  //   if (err.type === ServerSession.Error.TRY_REFRESH_TOKEN) {
-  //     return { props: { fromSupertokens: "needs-refresh" } };
-  //   } else if (err.type === ServerSession.Error.UNAUTHORISED) {
-  //     return { props: { fromSupertokens: "needs-refresh" } };
-  //   }
-  //   throw new Error(err);
-  // }
+  try {
+    session = await ServerSession.getSession(context.req, context.res, {
+      overrideGlobalClaimValidators: () => {
+        return [];
+      },
+    });
+    console.log("session inside try/catch: ", session);
+  } catch (err: any) {
+    console.log("error in serverSideProps: ", err.type, " ", err.message);
+    if (err.type === ServerSession.Error.TRY_REFRESH_TOKEN) {
+      return { props: { fromSupertokens: "needs-refresh" } };
+    } else if (err.type === ServerSession.Error.UNAUTHORISED) {
+      return { props: { fromSupertokens: "needs-refresh" } };
+    }
+    throw new Error(err);
+  }
 
   // const userId: string = session!.getUserId();
-  const userId = 1;
+  const userId = 2;
   console.log("userId in admin serverSideProps: ", userId);
 
   const data = await prisma.user.findUnique({

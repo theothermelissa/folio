@@ -122,8 +122,8 @@ export const NavBar = () => {
           </Link>
         ))}
       </NavTabs>
+      <ClaimFeed />
       <SettingsMenu>
-        {<ClaimFeed />}
         {/* <Link href={ADMIN_PATH}>
           <IconButton
             aria-label="Search database"

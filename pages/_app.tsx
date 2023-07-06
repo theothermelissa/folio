@@ -1,7 +1,8 @@
 import "../styles/globals.css";
 import React from "react";
-import SuperTokensWebJs from "supertokens-web-js";
+// import SuperTokensWebJs from "supertokens-web-js";
 import SuperTokensReact, { SuperTokensWrapper } from "supertokens-auth-react";
+// import SuperTokensReact, { SuperTokensWrapper } from "supertokens-auth-react";
 
 import { ChakraProvider } from "@chakra-ui/react";
 // TODO mpm: look @ CacheProvider from chakra next.js -- do you need it?

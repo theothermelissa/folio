@@ -1,10 +1,12 @@
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
+// import PasswordlessWebJs from "supertokens-web-js/recipe/passwordless";
+// import SessionWebJs from "supertokens-web-js/recipe/session";
 import SessionReact from "supertokens-auth-react/recipe/session";
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import { appInfo } from "./appInfo";
 import Router from "next/router";
 
-// const { NEXT_PUBLIC_BASE_URL_PATH } = process.env;
+const { NEXT_PUBLIC_BASE_URL_PATH } = process.env;
 
 export const frontendConfig = () => {
   return {
@@ -26,7 +28,14 @@ export const frontendConfig = () => {
           return undefined;
         },
       }),
-      SessionReact.init(),
+      SessionReact.init({
+        sessionTokenFrontendDomain: `.folio.pics`,
+        // sessionTokenBackendDomain: `${NEXT_PUBLIC_BASE_URL_PATH}`,
+      }),
+      // SessionWebJs.init({
+      //   // sessionTokenFrontendDomain: `.${NEXT_PUBLIC_BASE_URL_PATH}`,
+      //   sessionTokenFrontendDomain: `.folio.pics`,
+      // }),
     ],
     windowHandler: (oI) => {
       return {
