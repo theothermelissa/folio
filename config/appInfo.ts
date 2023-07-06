@@ -1,11 +1,6 @@
-const port = process.env.APP_PORT || 3000;
-
 const apiBasePath = "/api/auth/";
 
-export const websiteDomain =
-  process.env.BASE_URL_PATH ||
-  process.env.NEXT_PUBLIC_APP_URL ||
-  `localhost:${port}`;
+export const websiteDomain = process.env.NEXT_PUBLIC_BASE_URL_PATH;
 
 export const appInfo = {
   appName: "Folio",
