@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+const { NEXT_PUBLIC_BASE_PROTOCOL, NEXT_PUBLIC_BASE_URL_PATH } = process.env;
+
 export const config = {
   matcher: [
     /*
@@ -19,6 +21,7 @@ export default async function middleware(req: NextRequest) {
   // Get hostname of request (e.g. demo.vercel.pub, demo.localhost:3000)
   const hostname = req.headers.get("host") || "localhost:3000";
   // console.log("hostname in middleware: ", hostname);
+  const origin = req.headers.get("origin");
 
   const requestSubdomain = hostname.split(".")[0];
   // console.log("requestSubdomain in middleware: ", requestSubdomain);
@@ -27,7 +30,9 @@ export default async function middleware(req: NextRequest) {
   const path = url.pathname;
   // console.log("path in middleware: ", path);
 
-  req.headers.set("x-subdomain", requestSubdomain);
+  const res = NextResponse.next();
+
+  res.headers.set("x-subdomain", requestSubdomain);
 
   // TODO mpm: make a "demo" page
   const currentHost =
@@ -37,6 +42,13 @@ export default async function middleware(req: NextRequest) {
           .replace(`.folio-neon.vercel.app`, "")
       : hostname.replace(`.localhost:3000`, "");
 
+  if (currentHost) {
+    const allowedOrigins = [
+      `${NEXT_PUBLIC_BASE_PROTOCOL}${NEXT_PUBLIC_BASE_URL_PATH}`,
+      `$${NEXT_PUBLIC_BASE_PROTOCOL}${currentHost}.${NEXT_PUBLIC_BASE_URL_PATH}`,
+    ];
+    res.headers.append("Access-Control-Allow-Origin", origin);
+  }
   // TODO mpm: use this in future for admin route, etc.
   // rewrites for app pages
   // if (currentHost == "app") {

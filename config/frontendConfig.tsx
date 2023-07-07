@@ -6,8 +6,6 @@ import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordle
 import { appInfo } from "./appInfo";
 import Router from "next/router";
 
-const { NEXT_PUBLIC_BASE_URL_PATH } = process.env;
-
 export const frontendConfig = () => {
   return {
     appInfo,
