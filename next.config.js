@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
+const { withSuperjson } = require('next-superjson')
 const { NEXT_PUBLIC_BASE_URL_PATH } = process.env
+
 
 const nextConfig = {
     reactStrictMode: true,
@@ -20,4 +22,4 @@ const nextConfig = {
     
 };
 
-module.exports = nextConfig;
+module.exports = withSuperjson()(nextConfig)
