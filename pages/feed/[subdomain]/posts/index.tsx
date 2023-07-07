@@ -8,6 +8,8 @@ import useSWR from "swr";
 import { useAtom } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 import { currentFeedAtom, isClaimedAtom } from "../../../../atoms/atoms";
+import SuperJSON from "superjson";
+import { Post, User } from "../../../../types";
 
 const PostSkeleton = ({ height }) => (
   <Flex style={{ breakInside: "avoid", padding: "8px" }}>
@@ -115,8 +117,8 @@ export async function getStaticProps(context: GetStaticPropsContext) {
     },
   });
 
-  const posts = JSON.parse(JSON.stringify(result.posts));
-  const owner = JSON.parse(JSON.stringify(result.owner));
+  const posts = SuperJSON.parse(SuperJSON.stringify(result.posts)) as Post[];
+  const owner = SuperJSON.parse(SuperJSON.stringify(result.owner)) as User;
 
   return {
     props: {

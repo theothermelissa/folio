@@ -14,6 +14,7 @@ import { useEffect, useRef, useState } from "react";
 import Session from "supertokens-web-js/recipe/session";
 import { EditAccountValue } from "../../components/EditAccountValue";
 import AdminPosts from "../../components/admin-posts";
+import SuperJSON from "superjson";
 
 async function doesSessionExist() {
   if (await Session.doesSessionExist()) {
@@ -365,8 +366,8 @@ export const getServerSideProps = async (
       projects: true,
     },
   });
-  console.log("userData: ", JSON.parse(JSON.stringify(data)));
-  const userData = JSON.parse(JSON.stringify(data));
+  console.log("userData: ", SuperJSON.parse(SuperJSON.stringify(data)));
+  const userData = SuperJSON.parse(SuperJSON.stringify(data));
 
   return {
     props: {

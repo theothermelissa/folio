@@ -1,10 +1,11 @@
 import FeedLayout from "../../../layouts/feed-layout";
-import { NextPageWithLayout } from "../../../types";
+import { NextPageWithLayout, User } from "../../../types";
 import { GetStaticPropsContext, InferGetStaticPropsType } from "next/types";
 import { currentFeedAtom, isClaimedAtom } from "../../../atoms/atoms";
 import { useHydrateAtoms } from "jotai/utils";
 import { useAtom } from "jotai";
 import prisma from "../../../lib/prisma";
+import SuperJSON from "superjson";
 
 const Feed: NextPageWithLayout = (
   props: InferGetStaticPropsType<typeof getStaticProps>
@@ -51,7 +52,7 @@ export async function getStaticProps(context: GetStaticPropsContext) {
       owner: true,
     },
   });
-  const owner = JSON.parse(JSON.stringify(result.owner));
+  const owner = SuperJSON.parse(SuperJSON.stringify(result.owner)) as User;
 
   return {
     props: {

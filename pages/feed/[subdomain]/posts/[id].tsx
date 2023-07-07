@@ -9,6 +9,8 @@ import { currentFeedAtom, isClaimedAtom } from "../../../../atoms/atoms";
 import PostLayout from "../../../../layouts/post-layout";
 import prisma from "../../../../lib/prisma";
 import styled from "@emotion/styled";
+import SuperJSON from "superjson";
+import { Post as PostType } from "../../../../types";
 
 const Hero = styled(CldImage)`
   // height: auto;
@@ -123,7 +125,7 @@ export async function getStaticProps(context: GetStaticPropsContext) {
       subdomain: subdomain.toString(),
       author: result.author,
       claimed: Boolean(result.author.authId),
-      post: JSON.parse(JSON.stringify(result)),
+      post: SuperJSON.parse(SuperJSON.stringify(result)) as PostType,
     },
   };
 }

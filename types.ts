@@ -43,6 +43,7 @@ export type User = {
   posts: Post[];
   phone: string;
   feeds: Feed[];
+  authId?: string;
 };
 
 export type Post = {
