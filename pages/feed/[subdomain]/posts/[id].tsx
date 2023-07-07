@@ -1,11 +1,14 @@
-import { useRouter } from "next/router";
-import FeedLayout from "../../../../layouts/feed-layout";
+// import { useRouter } from "next/router";
 import { Flex, Heading, Text } from "@chakra-ui/react";
-import { GetStaticPropsContext } from "next/types";
-import styled from "@emotion/styled";
+import { GetStaticPropsContext, InferGetStaticPropsType } from "next/types";
 import { CldImage } from "next-cloudinary";
-import prisma from "../../../../lib/prisma";
+import { useAtom } from "jotai";
+import { useHydrateAtoms } from "jotai/utils";
+import { currentFeedAtom, isClaimedAtom } from "../../../../atoms/atoms";
+// import FeedLayout from "../../../../layouts/feed-layout";
 import PostLayout from "../../../../layouts/post-layout";
+import prisma from "../../../../lib/prisma";
+import styled from "@emotion/styled";
 
 const Hero = styled(CldImage)`
   // height: auto;
@@ -38,12 +41,20 @@ const PostBody = ({ body }) => {
   );
 };
 
-const Post = (props) => {
-  console.log("props: ", props);
+const Post = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const {
     fallback,
+    subdomain,
+    author,
+    claimed,
     post: { title, content, media, publishedDate },
   } = props;
+  useHydrateAtoms([
+    [currentFeedAtom, subdomain],
+    [isClaimedAtom, claimed],
+  ]);
+  const [currentFeed] = useAtom(currentFeedAtom);
+  const [isClaimed] = useAtom(currentFeedAtom);
 
   // heroImage
   // additional images, if any
@@ -91,21 +102,27 @@ export async function getStaticPaths() {
 
 export async function getStaticProps(context: GetStaticPropsContext) {
   const {
-    params: { id },
+    params: { id, subdomain },
   } = context;
   console.log("getting post: ", id);
   const result = await prisma.post.findUnique({
     where: {
       id: parseInt(id.toString()),
     },
+    include: {
+      author: true,
+    },
   });
   console.log("result: ", result);
 
   return {
     props: {
-      // fallback: {
-      //   posts: result.posts,
-      // },
+      fallback: {
+        post: result,
+      },
+      subdomain: subdomain.toString(),
+      author: result.author,
+      claimed: Boolean(result.author.authId),
       post: JSON.parse(JSON.stringify(result)),
     },
   };

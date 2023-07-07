@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../lib/prisma";
+
 export async function getUserFromSubdomain(subdomain: string) {
   const userResult = await prisma?.feed.findUnique({
     where: {
@@ -22,7 +23,6 @@ export default async function handler(
     response.status(404).json({ error: "No user found" });
     return;
   }
-  console.log("user: ", user);
   const { phone } = user;
   response.status(200).json({ phone });
 }

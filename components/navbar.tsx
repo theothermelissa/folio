@@ -19,6 +19,9 @@ import {
 import { useRouter } from "next/router";
 import Loading from "./loading";
 import { ClaimFeed } from "./admin-claim-feed";
+import { GetStaticPropsContext, InferGetStaticPropsType } from "next/types";
+import { useAtom } from "jotai";
+import { currentFeedAtom, isClaimedAtom } from "../atoms/atoms";
 
 const TOP_Z_INDEX = 999;
 
@@ -84,6 +87,7 @@ const PageName = (props: NameProps) => {
       setLoaded(true);
     }
   });
+
   return (
     <PageNameWrapper>
       <Skeleton isLoaded={loaded}>
@@ -96,23 +100,25 @@ const PageName = (props: NameProps) => {
 // TODO mpm: rewrite this to use Chakra color theme
 // TODO mpm: ... er, define color theme 🤦🏻‍♀️
 export const NavBar = () => {
+  const [currentFeed] = useAtom(currentFeedAtom);
+  const [isClaimed] = useAtom(isClaimedAtom);
+  // const { owner } = props;
+  // console.log("props: ", props);
+  // console.log("owner: ", owner);
   const router = useRouter();
+  // const [isClaimed, setIsClaimed] = useState(false);
 
   const {
     pathname,
-    query: { subdomain },
+    //   query: { subdomain },
   } = router;
 
   const terminalPath = pathname.replace("/feed/[subdomain]", "");
   const currentPath = terminalPath.length > 0 ? terminalPath : "/";
 
-  const handleClaimRequest = () => {
-    const redirectUrl = `${window.location.origin}/api/auth/login`;
-  };
-
   return (
     <Nav as="header" boxShadow="sm">
-      <PageName name={subdomain} />
+      <PageName name={currentFeed} />
       <NavTabs>
         {NAV_LINK_INDICES.map(({ path, name }) => (
           <Link href={path} key={path}>
@@ -122,17 +128,23 @@ export const NavBar = () => {
           </Link>
         ))}
       </NavTabs>
-      <ClaimFeed />
-      <SettingsMenu>
-        {/* <Link href={ADMIN_PATH}>
-          <IconButton
-            aria-label="Search database"
-            size="sm"
-            variant="ghost"
-            icon={<HamburgerIcon margin="3px" boxSize={4} color="gainsboro" />}
-          />
-        </Link> */}
-      </SettingsMenu>
+      {isClaimed ? (
+        <SettingsMenu>
+          <Link href={ADMIN_PATH}>
+            <Button
+              // size="sm"
+              variant="ghost"
+              // leftIcon={
+              //   <HamburgerIcon margin="3px" boxSize={4} color="gainsboro" />
+              // }
+            >
+              Settings
+            </Button>
+          </Link>
+        </SettingsMenu>
+      ) : (
+        <ClaimFeed />
+      )}
     </Nav>
   );
 };

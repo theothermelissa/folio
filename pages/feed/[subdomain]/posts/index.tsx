@@ -1,51 +1,13 @@
 import PostItem from "../../../../components/posts/post-feed-item";
 import FeedLayout from "../../../../layouts/feed-layout";
 import { Box, Flex, Grid, Skeleton } from "@chakra-ui/react";
-import { SWRConfig } from "swr/_internal";
 import { GetStaticPropsContext, InferGetStaticPropsType } from "next/types";
 import prisma from "../../../../lib/prisma";
 import useSWR from "swr";
-import { useRouter } from "next/router";
-
-export async function getStaticPaths() {
-  const result = await prisma.feed.findMany({});
-
-  // todo: better types from prisma results
-  const paths = result.map((post: any) => ({
-    params: { subdomain: post.subdomain },
-  }));
-  return {
-    paths,
-    fallback: "blocking",
-  };
-}
-
-export async function getStaticProps(context: GetStaticPropsContext) {
-  const {
-    params: { subdomain },
-  } = context;
-  const result = await prisma?.feed.findUnique({
-    where: {
-      subdomain: subdomain.toString(),
-    },
-    include: {
-      posts: true,
-    },
-  });
-  // console.log("result of getting posts: ", result);
-
-  const posts = JSON.parse(JSON.stringify(result.posts));
-
-  return {
-    props: {
-      // fallback: {
-      //   posts: result.posts,
-      // },
-      posts: posts,
-    },
-    revalidate: 5,
-  };
-}
+// import { useRouter } from "next/router";
+import { useAtom } from "jotai";
+import { useHydrateAtoms } from "jotai/utils";
+import { currentFeedAtom, isClaimedAtom } from "../../../../atoms/atoms";
 
 const PostSkeleton = ({ height }) => (
   <Flex style={{ breakInside: "avoid", padding: "8px" }}>
@@ -82,8 +44,14 @@ export const fetcher = (url: string, config: FetchConfig) =>
   fetch(url, config).then((res) => res.json());
 
 const Posts = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
-  const router = useRouter();
-  const { subdomain } = router.query;
+  // const router = useRouter();
+  const { subdomain, owner, claimed } = props;
+  useHydrateAtoms([
+    [currentFeedAtom, subdomain],
+    [isClaimedAtom, claimed],
+  ]);
+  const [currentFeed] = useAtom(currentFeedAtom);
+  const [isClaimed] = useAtom(isClaimedAtom);
   const { data } = useSWR(url, () => fetcher(url, fetcherConfig), {
     fallbackData: props,
     refreshInterval: 5000,
@@ -91,7 +59,7 @@ const Posts = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
 
   const fetcherConfig = {
     headers: {
-      "x-subdomain": subdomain.toString(),
+      "x-subdomain": currentFeed,
     },
   };
 
@@ -119,3 +87,47 @@ Posts.getLayout = function getLayout(page: React.ReactElement) {
 };
 
 export default Posts;
+
+export async function getStaticPaths() {
+  const result = await prisma.feed.findMany({});
+
+  // todo: better types from prisma results
+  const paths = result.map((feed: any) => ({
+    params: { subdomain: feed.subdomain },
+  }));
+  return {
+    paths,
+    fallback: "blocking",
+  };
+}
+
+export async function getStaticProps(context: GetStaticPropsContext) {
+  const {
+    params: { subdomain },
+  } = context;
+  const result = await prisma?.feed.findUnique({
+    where: {
+      subdomain: subdomain.toString(),
+    },
+    include: {
+      posts: true,
+      owner: true,
+    },
+  });
+
+  const posts = JSON.parse(JSON.stringify(result.posts));
+  const owner = JSON.parse(JSON.stringify(result.owner));
+
+  return {
+    props: {
+      // fallback: {
+      //   posts: result.posts,
+      // },
+      owner: owner,
+      claimed: Boolean(owner.authId),
+      subdomain: subdomain.toString(),
+      posts: posts,
+    },
+    // revalidate: 5,
+  };
+}

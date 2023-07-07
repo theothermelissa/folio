@@ -6,11 +6,13 @@ import NextCors from "nextjs-cors";
 
 supertokens.init(backendConfig());
 
+const { NEXT_PUBLIC_BASE_URL_PATH } = process.env;
+
 export default async function user(req: any, res: any) {
   // NOTE: We need CORS only if we are querying the APIs from a different origin
   await NextCors(req, res, {
     methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
-    origin: "http://localhost:3000",
+    origin: NEXT_PUBLIC_BASE_URL_PATH,
     credentials: true,
     allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
   });

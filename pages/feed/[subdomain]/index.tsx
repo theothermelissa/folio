@@ -1,14 +1,25 @@
-import { useRouter } from "next/router";
 import FeedLayout from "../../../layouts/feed-layout";
 import { NextPageWithLayout } from "../../../types";
+import { GetStaticPropsContext, InferGetStaticPropsType } from "next/types";
+import { currentFeedAtom, isClaimedAtom } from "../../../atoms/atoms";
+import { useHydrateAtoms } from "jotai/utils";
+import { useAtom } from "jotai";
+import prisma from "../../../lib/prisma";
 
-const Feed: NextPageWithLayout = () => {
-  const router = useRouter();
-  const {
-    query: { subdomain },
-  } = router;
+const Feed: NextPageWithLayout = (
+  props: InferGetStaticPropsType<typeof getStaticProps>
+) => {
+  const { subdomain, owner, claimed } = props;
+  useHydrateAtoms([
+    [currentFeedAtom, subdomain],
+    [isClaimedAtom, claimed],
+  ]);
+  const [currentFeed] = useAtom(currentFeedAtom);
+  const [isClaimed] = useAtom(isClaimedAtom);
+  // console.log("currentFeed from atom: ", currentFeed);
+  console.log("isClaimed from atom: ", isClaimed);
 
-  return <p>This is the subdomain index: {router.query.subdomain}</p>;
+  return <p>This is the subdomain index: {subdomain}</p>;
 };
 
 Feed.getLayout = function getLayout(page: React.ReactElement) {
@@ -17,26 +28,37 @@ Feed.getLayout = function getLayout(page: React.ReactElement) {
 
 export default Feed;
 
-// export async function getStaticPaths() {
-//   const res = await fetch("/api/feeds");
-//   const feeds = await res.json();
+export async function getStaticPaths() {
+  const result = await prisma.feed.findMany({});
+  const paths = result.map((feed: any) => ({
+    params: { subdomain: feed.subdomain },
+  }));
+  return {
+    paths,
+    fallback: "blocking",
+  };
+}
 
-//   // Get the paths we want to pre-render based on posts
-//   const paths = feeds.map((feed: any) => ({
-//     params: { subdomain: feed.subdomain },
-//   }));
+export async function getStaticProps(context: GetStaticPropsContext) {
+  const {
+    params: { subdomain },
+  } = context;
+  const result = await prisma.feed.findUnique({
+    where: {
+      subdomain: subdomain.toString(),
+    },
+    include: {
+      owner: true,
+    },
+  });
+  const owner = JSON.parse(JSON.stringify(result.owner));
 
-//   // We'll pre-render only these paths at build time.
-//   // { fallback: false } means other routes should 404.
-//   return { paths, fallback: false };
-// }
-
-// export async function getStaticProps({ params }) {
-//   // params contains the post `id`.
-//   // If the route is like /posts/1, then params.id is 1
-//   const res = await fetch(`https://.../posts/${params.id}`);
-//   const post = await res.json();
-
-//   // Pass post data to the page via props
-//   return { props: { post } };
-// }
+  return {
+    props: {
+      subdomain: subdomain.toString(),
+      owner: owner,
+      claimed: Boolean(owner.authId),
+    },
+    // revalidate: 5,
+  };
+}
