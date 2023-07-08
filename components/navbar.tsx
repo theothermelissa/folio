@@ -7,7 +7,7 @@ import { ADMIN_PATH, NAVBAR_HEIGHT, NAV_LINK_INDICES } from "../constants";
 import styled from "@emotion/styled";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { HamburgerIcon, SettingsIcon } from "@chakra-ui/icons";
+import { SettingsIcon } from "@chakra-ui/icons";
 import {
   Button,
   Flex,
@@ -21,49 +21,50 @@ import Loading from "./loading";
 import { ClaimFeed } from "./admin-claim-feed";
 import { GetStaticPropsContext, InferGetStaticPropsType } from "next/types";
 import { useAtom } from "jotai";
-import { currentFeedAtom, isClaimedAtom } from "../atoms/atoms";
+import { currentFeedAtom, isClaimedAtom, pagesAtom } from "../atoms/atoms";
 
 const TOP_Z_INDEX = 999;
 
 type TabProps = {
-  isactive: boolean;
-  children: React.ReactNode;
-  key: string;
+  isactive?: boolean;
+  children?: React.ReactNode;
 };
 
 const Nav = styled(Flex)`
   position: fixed;
-  justify-content: space-between;
   background-color: white;
   width: 100%;
-  height: ${NAVBAR_HEIGHT}px;
   align-items: center;
   z-index: ${TOP_Z_INDEX};
+  padding: 0px 12px;
+  height: ${NAVBAR_HEIGHT}px;
 `;
 
 const PageNameWrapper = styled(Flex)`
-  flex: 1;
-  justify-content: flex-start;
+  width: 100%;
+  position: absolute;
+  justify-content: center;
   align-items: center;
-  padding: 0px 0px 0px 24px;
+  pointer-events: none;
 `;
 
 const PageNameText = styled(Heading)`
-  height: 100%;
+  // height: 100%;
 `;
 
 const SettingsMenu = styled.div`
-  display: flex;
-  height: 100%;
-  flex: 1;
-  justify-content: flex-end;
-  align-items: flex-start;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  margin: 4px;
 `;
 
 const NavTabs = styled.div`
   display: flex;
-  flex: 1;
-  justify-content: center;
+  // flex: 1;
+  justify-content: flex-start;
+  width: 33%;
+  min-width: 300px;
 `;
 
 const StyledTab = styled.div<TabProps>`
@@ -97,49 +98,58 @@ const PageName = (props: NameProps) => {
   );
 };
 
-// TODO mpm: rewrite this to use Chakra color theme
-// TODO mpm: ... er, define color theme 🤦🏻‍♀️
+type PageLinkProps = {
+  page: string;
+  currentPath: string;
+};
+
+const PageLink = (props: PageLinkProps) => {
+  const { page, currentPath } = props;
+  const { path, name } = NAV_LINK_INDICES.find(
+    (item) => item.name.toLowerCase() === page.toLowerCase()
+  );
+
+  const isActive = path === currentPath;
+  return (
+    <Link href={path} key={path}>
+      <StyledTab isactive={isActive} key={path}>
+        {name}
+      </StyledTab>
+    </Link>
+  );
+};
+
 export const NavBar = () => {
   const [currentFeed] = useAtom(currentFeedAtom);
   const [isClaimed] = useAtom(isClaimedAtom);
-  // const { owner } = props;
+  const [pages] = useAtom(pagesAtom);
   // console.log("props: ", props);
   // console.log("owner: ", owner);
   const router = useRouter();
-  // const [isClaimed, setIsClaimed] = useState(false);
 
-  const {
-    pathname,
-    //   query: { subdomain },
-  } = router;
+  const { pathname } = router;
+  console.log("pathname: ", pathname);
 
-  const terminalPath = pathname.replace("/feed/[subdomain]", "");
-  const currentPath = terminalPath.length > 0 ? terminalPath : "/";
+  const endPath = pathname.replace("/feed/[subdomain]", "");
+  const currentPath = endPath.length > 0 ? endPath : "/";
 
   return (
-    <Nav as="header" boxShadow="sm">
-      <PageName name={currentFeed} />
+    <Nav as="header" boxShadow="md">
       <NavTabs>
-        {NAV_LINK_INDICES.map(({ path, name }) => (
-          <Link href={path} key={path}>
-            <StyledTab isactive={path === currentPath} key={path}>
-              {name}
-            </StyledTab>
-          </Link>
-        ))}
+        {pages.map((page) => {
+          console.log("page: ", page);
+          return <PageLink page={page} currentPath={currentPath} />;
+        })}
       </NavTabs>
+      <PageName name={currentFeed} />
       {isClaimed ? (
         <SettingsMenu>
           <Link href={ADMIN_PATH}>
-            <Button
-              // size="sm"
+            <IconButton
+              aria-label="settings"
               variant="ghost"
-              // leftIcon={
-              //   <HamburgerIcon margin="3px" boxSize={4} color="gainsboro" />
-              // }
-            >
-              Settings
-            </Button>
+              icon={<SettingsIcon margin="3px" boxSize={4} color="dimgrey" />}
+            />
           </Link>
         </SettingsMenu>
       ) : (

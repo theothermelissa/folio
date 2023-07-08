@@ -13,6 +13,7 @@ import SuperJSON from "superjson";
 import { Post as PostType } from "../../../../types";
 
 const Hero = styled(CldImage)`
+  height: 100%;
   // height: auto;
   // width: 100%;
   // object-fit: cover;
@@ -58,18 +59,11 @@ const Post = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const [currentFeed] = useAtom(currentFeedAtom);
   const [isClaimed] = useAtom(currentFeedAtom);
 
-  // heroImage
-  // additional images, if any
-  // title
-  // content
-  // date posted
-  // eventually tags & metadata
-
   return (
     <Flex flexDirection="column" width="100%" alignItems="center">
-      <HeroImage src={media[0]} />
+      {media.length > 0 && <HeroImage src={media[0]} />}
       {title && <PostTitle title={title} />}
-      <PostBody body={content} />
+      {content && <PostBody body={content} />}
     </Flex>
   );
 };

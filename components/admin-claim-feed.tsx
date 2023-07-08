@@ -7,6 +7,9 @@ import { FetchConfig } from "../pages/feed/[subdomain]/posts";
 import useSWR from "swr";
 
 const Wrapper = styled(Flex)`
+  position: absolute;
+  right: 0;
+  top: 0;
   flex-direction: row;
   justify-content: flex-end;
   height: 100%;

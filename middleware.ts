@@ -17,11 +17,12 @@ export const config = {
 
 export default async function middleware(req: NextRequest) {
   const url = req.nextUrl;
-
+  console.log("url in middleware: ", url);
   // Get hostname of request (e.g. demo.vercel.pub, demo.localhost:3000)
   const hostname = req.headers.get("host") || "localhost:3000";
-  // console.log("hostname in middleware: ", hostname);
-  const origin = req.headers.get("origin");
+  console.log("hostname in middleware: ", hostname);
+  const origin = url.origin;
+  console.log("origin in middleware: ", origin);
 
   const requestSubdomain = hostname.split(".")[0];
   // console.log("requestSubdomain in middleware: ", requestSubdomain);
@@ -30,9 +31,9 @@ export default async function middleware(req: NextRequest) {
   const path = url.pathname;
   // console.log("path in middleware: ", path);
 
-  const res = NextResponse.next();
+  // const res = NextResponse.next();
 
-  res.headers.set("x-subdomain", requestSubdomain);
+  // res.headers.set("x-subdomain", requestSubdomain);
 
   // TODO mpm: make a "demo" page
   const currentHost =
@@ -43,11 +44,21 @@ export default async function middleware(req: NextRequest) {
       : hostname.replace(`.localhost:3000`, "");
 
   if (currentHost) {
+    console.log("currentHost: ", currentHost);
+    const hostToUse = currentHost.split(".")[0];
+    console.log("hostToUse: ", hostToUse);
     const allowedOrigins = [
       `${NEXT_PUBLIC_BASE_PROTOCOL}${NEXT_PUBLIC_BASE_URL_PATH}`,
-      `$${NEXT_PUBLIC_BASE_PROTOCOL}${currentHost}.${NEXT_PUBLIC_BASE_URL_PATH}`,
+      `${NEXT_PUBLIC_BASE_PROTOCOL}${hostToUse}.${NEXT_PUBLIC_BASE_URL_PATH}`,
     ];
-    res.headers.append("Access-Control-Allow-Origin", origin);
+    console.log("allowedOrigins: ", allowedOrigins);
+
+    if (allowedOrigins.includes(origin)) {
+      console.log("origin is included");
+      // res.headers.append("Access-Control-Allow-Origin", origin);
+    } else {
+      console.log("origin is NOT included");
+    }
   }
   // TODO mpm: use this in future for admin route, etc.
   // rewrites for app pages
@@ -80,8 +91,10 @@ export default async function middleware(req: NextRequest) {
     //   "new URL(`${path}`, req.url: ",
     //   new URL(`${path}`, req.url)
     // );
-    return NextResponse.rewrite(new URL(`${path}`, req.url));
+    // return NextResponse.rewrite(new URL(`${path}`, req.url));
   }
   // rewrite everything else to `/_sites/[site] dynamic route
-  return NextResponse.rewrite(new URL(`/feed/${currentHost}${path}`, req.url));
+  const newUrl = new URL(`/feed/${currentHost}${path}`, req.url);
+  console.log("newUrl: ", newUrl);
+  return NextResponse.rewrite(newUrl);
 }

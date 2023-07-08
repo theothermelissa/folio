@@ -12,7 +12,7 @@ const PostItem = (props: ItemProps) => {
   } = props;
 
   const preview =
-    content.length < 145 ? content.padEnd(100) : content.slice(0, 144) + " ...";
+    content.length < 145 ? content : content.slice(0, 144) + " ...";
 
   return (
     <Grid marginBottom="12px">

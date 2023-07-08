@@ -5,6 +5,8 @@ export const currentFeedAtom = atom("");
 
 export const isClaimedAtom = atom(false);
 
+export const pagesAtom = atom(["posts", "contact"]);
+
 // const readWriteAtom = atom(
 //   (get) => get(priceAtom) * 2,
 //   (get, set, newPrice) => {
