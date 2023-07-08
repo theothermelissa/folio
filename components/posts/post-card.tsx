@@ -10,21 +10,20 @@ type PostCardProps = {
   imageUrls: string[];
 };
 
-type ImageProps = {
-  hasinfo: boolean;
-};
-
 const StyledCard = styled(Card)`
   // margin: 10px;
   break-inside: avoid;
   display: flex;
 `;
 
-const ImagePreview = styled(CldImage)<ImageProps>`
+const ImageWithContent = styled(CldImage)`
   height: auto;
   width: 100%;
   object-fit: cover;
-  border-radius: ${(props) => (props.hasinfo ? "4px 4px 0px 0px" : "4px")};
+  border-radius: 4px 4px 0px 0px;
+`;
+const ImageWithoutContent = styled(ImageWithContent)`
+  border-radius: 4px;
 `;
 
 const FakePic = styled.div`
@@ -38,11 +37,34 @@ const PostInfo = styled(Stack)`
   margin-top: 8px;
 `;
 
+const PostImage = ({ hasInfo, imageSrc }) => {
+  return (
+    <>
+      {hasInfo ? (
+        <ImageWithContent
+          height="800"
+          width="400"
+          src={imageSrc}
+          alt="Post image"
+        />
+      ) : (
+        <ImageWithoutContent
+          height="800"
+          width="400"
+          src={imageSrc}
+          alt="Post image"
+        />
+      )}
+    </>
+  );
+};
+
 export const PostCard = (props: PostCardProps) => {
   const { id, name, imageUrls, preview } = props;
   const hasTitle = name.length > 0;
   const hasContent = preview.length > 0;
-  const hasinfo = hasTitle || hasContent;
+  const hasImage = imageUrls.length > 0;
+  const hasInfo = hasTitle || hasContent;
 
   return (
     <Link
@@ -53,16 +75,8 @@ export const PostCard = (props: PostCardProps) => {
     >
       <StyledCard boxShadow="lg" value={id} maxW="sm" borderRadius="md">
         <CardBody style={{ padding: "0px" }}>
-          {imageUrls.length > 0 && (
-            <ImagePreview
-              height="800"
-              width="400"
-              src={imageUrls[0]}
-              alt="Post image"
-              hasinfo={hasinfo}
-            />
-          )}
-          {hasinfo && (
+          {hasImage && <PostImage hasInfo={hasInfo} imageSrc={imageUrls[0]} />}
+          {hasInfo && (
             <PostInfo mt="6" spacing="1">
               {hasTitle && <Heading size="md">{name}</Heading>}
               {hasContent && (
