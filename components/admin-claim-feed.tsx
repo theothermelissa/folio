@@ -5,6 +5,8 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { handleOTPInput, sendOTP } from "../lib/auth";
 import { FetchConfig } from "../pages/feed/[subdomain]/posts";
 import useSWR from "swr";
+import { useAtom } from "jotai";
+import { isClaimedAtom } from "../atoms/atoms";
 
 const Wrapper = styled(Flex)`
   position: absolute;
@@ -28,6 +30,7 @@ const fetcher = (url: string, config: FetchConfig) =>
 export const ClaimFeed = () => {
   const router = useRouter();
   const { subdomain } = router.query;
+  const [claimed, setClaimed] = useAtom(isClaimedAtom);
 
   const url = "/api/account/phone";
 
@@ -60,10 +63,11 @@ export const ClaimFeed = () => {
   const handleSubmitCode = async () => {
     handleOTPInput(code).then((result) => {
       if (result && result.status === "OK") {
+        setClaimed(true);
       }
       // console.log("result of handleOTPInput: ", result);
       setLoading(false);
-      setCode("");
+      // setCode("");
     });
   };
 

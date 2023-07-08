@@ -3,7 +3,7 @@ import prisma from "../lib/prisma";
 
 export const currentFeedAtom = atom("");
 
-export const isClaimedAtom = atom(false);
+export const isClaimedAtom = atom(true);
 
 export const pagesAtom = atom(["posts", "contact"]);
 
