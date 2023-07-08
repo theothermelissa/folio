@@ -45,7 +45,7 @@ export default async function middleware(req: NextRequest) {
       `${NEXT_PUBLIC_BASE_PROTOCOL}${hostToUse}.${NEXT_PUBLIC_BASE_URL_PATH}`,
     ];
 
-    // console.log("currentHost: ", currentHost);
+    console.log("currentHost: ", currentHost);
     // console.log("hostToUse: ", hostToUse);
     // console.log("allowedOrigins: ", allowedOrigins);
 
