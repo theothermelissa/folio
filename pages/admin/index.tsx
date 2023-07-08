@@ -181,9 +181,7 @@ const Admin = ({ fallbackUserData }) => {
 Admin.getLayout = function getLayout(page: React.ReactElement) {
   return (
     <PageLayout>
-      {/* <Protected> */}
-      {page}
-      {/* </Protected> */}
+      <Protected>{page}</Protected>
     </PageLayout>
   );
 };
@@ -193,35 +191,35 @@ export default Admin;
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  // console.log("calling serverSideProps");
-  // const protocol = process.env.NEXT_PUBLIC_BASE_PROTOCOL;
-  // const urlPath = process.env.NEXT_PUBLIC_BASE_URL_PATH;
-  // const fullHomePath = `${protocol}${urlPath}`;
-  // supertokensNode.init(backendConfig());
-  // let session: ServerSession.SessionContainer;
+  console.log("calling serverSideProps");
+  const protocol = process.env.NEXT_PUBLIC_BASE_PROTOCOL;
+  const urlPath = process.env.NEXT_PUBLIC_BASE_URL_PATH;
+  const fullHomePath = `${protocol}${urlPath}`;
+  supertokensNode.init(backendConfig());
+  let session: ServerSession.SessionContainer;
 
-  // try {
-  //   session = await ServerSession.getSession(context.req, context.res, {
-  //     overrideGlobalClaimValidators: () => {
-  //       return [];
-  //     },
-  //   });
-  //   console.log("session inside try/catch: ", session);
-  // } catch (err: any) {
-  //   console.log("error in serverSideProps: ", err.type, " ", err.message);
-  //   if (err.type === ServerSession.Error.TRY_REFRESH_TOKEN) {
-  //     return { props: { fromSupertokens: "needs-refresh" } };
-  //   } else if (err.type === ServerSession.Error.UNAUTHORISED) {
-  //     return { props: { fromSupertokens: "needs-refresh" } };
-  //   }
-  // }
+  try {
+    session = await ServerSession.getSession(context.req, context.res, {
+      overrideGlobalClaimValidators: () => {
+        return [];
+      },
+    });
+    console.log("session inside try/catch: ", session);
+  } catch (err: any) {
+    console.log("error in serverSideProps: ", err.type, " ", err.message);
+    if (err.type === ServerSession.Error.TRY_REFRESH_TOKEN) {
+      return { props: { fromSupertokens: "needs-refresh" } };
+    } else if (err.type === ServerSession.Error.UNAUTHORISED) {
+      return { props: { fromSupertokens: "needs-refresh" } };
+    }
+  }
 
-  // const userId: string = session!.getUserId();
-  const userId = 2;
+  const userId: string = session!.getUserId();
+  // const userId = 2;
 
   const data = await prisma.user.findUnique({
     where: {
-      id: userId,
+      authId: userId,
     },
     include: {
       feeds: true,
