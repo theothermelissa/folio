@@ -52,6 +52,6 @@ export async function getStaticProps(context: GetStaticPropsContext) {
       owner: result.owner,
       claimed: Boolean(result.owner.authId),
     },
-    // revalidate: 5,
+    revalidate: 10,
   };
 }
