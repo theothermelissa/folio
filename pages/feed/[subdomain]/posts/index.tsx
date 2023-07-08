@@ -48,6 +48,11 @@ export const fetcher = (url: string, config: FetchConfig) =>
 
 const Posts = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { subdomain, owner, claimed, fullHomePath } = props;
+  const router = useRouter();
+
+  if (!subdomain) {
+    router.push(fullHomePath);
+  }
 
   useHydrateAtoms([
     [currentFeedAtom, subdomain],
@@ -123,9 +128,8 @@ export async function getStaticProps(context: GetStaticPropsContext) {
 
   if (!result) {
     return {
-      redirect: {
-        permanent: false,
-        destination: fullHomePath,
+      props: {
+        fullHomePath,
       },
     };
   }

@@ -1,20 +1,23 @@
-import { InferGetStaticPropsType } from "next/types";
+import { useRouter } from "next/router";
 import prisma from "../../../lib/prisma";
+import { GetStaticPropsContext, InferGetStaticPropsType } from "next/types";
 
 const FeedAdmin = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
-  return <div>Please use admin at the root path</div>;
-};
+  const { fullHomePath } = props;
+  const router = useRouter();
 
-// Posts.getLayout = function getLayout(page: React.ReactElement) {
-//   return <FeedLayout>{page}</FeedLayout>;
-// };
+  if (typeof window !== "undefined") {
+    router.push(`${fullHomePath}/admin`);
+  }
+
+  return <div></div>;
+};
 
 export default FeedAdmin;
 
 export async function getStaticPaths() {
   const result = await prisma.feed.findMany({});
 
-  // todo: better types from prisma results
   const paths = result.map((feed: any) => ({
     params: { subdomain: feed.subdomain },
   }));
@@ -24,15 +27,17 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps() {
+export async function getStaticProps(context: GetStaticPropsContext) {
+  const {
+    params: { subdomain },
+  } = context;
   const protocol = process.env.NEXT_PUBLIC_BASE_PROTOCOL;
   const urlPath = process.env.NEXT_PUBLIC_BASE_URL_PATH;
   const fullHomePath = `${protocol}${urlPath}`;
 
   return {
-    redirect: {
-      permanent: false,
-      destination: `${fullHomePath}/admin`,
+    props: {
+      fullHomePath,
     },
   };
 }
