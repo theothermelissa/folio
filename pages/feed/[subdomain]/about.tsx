@@ -1,10 +1,10 @@
 // import { useRouter } from "next/router";
-import FeedLayout from "../../../../layouts/feed-layout";
+import FeedLayout from "../../../layouts/feed-layout";
 import { GetStaticPropsContext, InferGetStaticPropsType } from "next/types";
 import { useAtom } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
-import { currentFeedAtom, isClaimedAtom } from "../../../../atoms/atoms";
-import prisma from "../../../../lib/prisma";
+import { currentFeedAtom, isClaimedAtom } from "../../../atoms/atoms";
+import prisma from "../../../lib/prisma";
 
 const About = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { subdomain, owner, claimed } = props;

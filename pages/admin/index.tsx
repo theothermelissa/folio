@@ -137,9 +137,7 @@ const Admin = ({ userData }) => {
 Admin.getLayout = function getLayout(page: React.ReactElement) {
   return (
     <PageLayout>
-      {/* <Protected> */}
-      {page}
-      {/* </Protected> */}
+      <Protected>{page}</Protected>
     </PageLayout>
   );
 };
@@ -149,8 +147,10 @@ export default Admin;
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  console.log("calling serverSideProps");
-
+  // console.log("calling serverSideProps");
+  // const protocol = process.env.NEXT_PUBLIC_BASE_PROTOCOL;
+  // const urlPath = process.env.NEXT_PUBLIC_BASE_URL_PATH;
+  // const fullHomePath = `${protocol}${urlPath}`;
   supertokensNode.init(backendConfig());
   let session: ServerSession.SessionContainer;
 
@@ -168,7 +168,6 @@ export const getServerSideProps = async (
     } else if (err.type === ServerSession.Error.UNAUTHORISED) {
       return { props: { fromSupertokens: "needs-refresh" } };
     }
-    throw new Error(err);
   }
 
   // const userId: string = session!.getUserId();

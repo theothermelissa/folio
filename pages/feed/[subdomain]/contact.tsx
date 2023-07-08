@@ -1,9 +1,9 @@
 import { useAtom } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 import { InferGetStaticPropsType, GetStaticPropsContext } from "next";
-import { currentFeedAtom } from "../../../../atoms/atoms";
-import FeedLayout from "../../../../layouts/feed-layout";
-import prisma from "../../../../lib/prisma";
+import { currentFeedAtom } from "../../../atoms/atoms";
+import FeedLayout from "../../../layouts/feed-layout";
+import prisma from "../../../lib/prisma";
 
 const Contact = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { subdomain } = props;

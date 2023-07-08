@@ -1,9 +1,9 @@
 import { GetStaticPropsContext, InferGetStaticPropsType } from "next/types";
-import FeedLayout from "../../../../layouts/feed-layout";
-import prisma from "../../../../lib/prisma";
+import FeedLayout from "../../../layouts/feed-layout";
+import prisma from "../../../lib/prisma";
 import { useAtom } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
-import { currentFeedAtom } from "../../../../atoms/atoms";
+import { currentFeedAtom } from "../../../atoms/atoms";
 
 const Projects = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { subdomain } = props;
