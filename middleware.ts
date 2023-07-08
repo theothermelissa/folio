@@ -45,16 +45,16 @@ export default async function middleware(req: NextRequest) {
       `${NEXT_PUBLIC_BASE_PROTOCOL}${hostToUse}.${NEXT_PUBLIC_BASE_URL_PATH}`,
     ];
 
-    console.log("currentHost: ", currentHost);
+    // console.log("currentHost: ", currentHost);
     // console.log("hostToUse: ", hostToUse);
     // console.log("allowedOrigins: ", allowedOrigins);
 
-    if (allowedOrigins.includes(origin)) {
-      console.log("origin is included");
-      // res.headers.append("Access-Control-Allow-Origin", origin);
-    } else {
-      console.log("origin is NOT included");
-    }
+    // if (allowedOrigins.includes(origin)) {
+    //   // console.log("origin is included");
+    //   // res.headers.append("Access-Control-Allow-Origin", origin);
+    // } else {
+    //   // console.log("origin is NOT included");
+    // }
   }
   // TODO mpm: use this in future for admin route, etc.
   // rewrites for app pages
@@ -89,6 +89,6 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.rewrite(new URL(`${path}`, req.url));
   }
   const newUrl = new URL(`/feed/${currentHost}${path}`, req.url);
-  console.log("newUrl: ", newUrl);
+  // console.log("newUrl: ", newUrl);
   return NextResponse.rewrite(newUrl);
 }

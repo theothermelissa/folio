@@ -7,8 +7,9 @@ import phone from "../pages/api/account/phone";
 import feeds from "../pages/api/feeds";
 import posts from "../pages/api/posts";
 import { EditAccountValue } from "./EditAccountValue";
-import AdminPosts from "./admin-posts";
+import AdminPosts from "./admin-post-list";
 import { Feed, Post, User } from "../types";
+import AdminPostList from "./admin-post-list";
 
 type UserData = {
   id: number;
@@ -34,9 +35,16 @@ const LinkTarget = styled.div`
   top: calc(-${NAVBAR_HEIGHT}px - 10px);
 `;
 
-export const allAdminSections = (userData: UserData) => {
-  const { id, email, name, image, projects, posts, phone, ownedFeeds, feeds } =
-    userData;
+type AdminSectionProps = {
+  userData: UserData;
+  postsData: Post[];
+  feedsData: Feed[];
+};
+
+export const allAdminSections = (props: AdminSectionProps) => {
+  const { id, email, name, image, projects, phone } = props.userData;
+  const posts = props.postsData;
+  const feeds = props.feedsData;
   return [
     {
       label: "Account Information",
@@ -92,7 +100,7 @@ export const allAdminSections = (userData: UserData) => {
       label: "Posts",
       id: "posts",
       subsections: [],
-      component: <AdminPosts posts={posts} userId={id} />,
+      component: <AdminPostList fallbackPosts={posts} userId={id} />,
     },
     {
       label: "Feeds",
@@ -108,27 +116,16 @@ export const allAdminSections = (userData: UserData) => {
           ),
         },
         {
-          label: "Feeds You Own",
-          id: "owned-feeds",
+          label: "Your Feeds",
+          id: "feeds",
           component: (
             <Box minHeight="500px">
-              {ownedFeeds &&
-                ownedFeeds.map((feed) => (
+              {feeds &&
+                feeds.map((feed) => (
                   <Text key={feed.subdomain} fontSize="md">
                     {feed.subdomain}
                   </Text>
                 ))}
-            </Box>
-          ),
-        },
-        {
-          label: "Contributing Feeds",
-          id: "contributing-feeds",
-          component: (
-            <Box minHeight="500px">
-              {feeds.length > ownedFeeds.length && (
-                <Text fontSize="md">Yep you are a contributor.</Text>
-              )}
             </Box>
           ),
         },

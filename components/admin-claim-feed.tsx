@@ -34,13 +34,7 @@ export const ClaimFeed = () => {
 
   const url = "/api/account/phone";
 
-  const { data, isLoading, error } = useSWR(subdomain ? url : null, () =>
-    fetcher(url, {
-      headers: {
-        "x-subdomain": subdomain?.toString(),
-      },
-    })
-  );
+  const { data, isLoading, error } = useSWR(subdomain ? url : null, fetcher);
 
   const [showCodeInput, setShowCodeInput] = useState(false);
   const [code, setCode] = useState("");

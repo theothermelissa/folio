@@ -19,10 +19,12 @@ import { useState } from "react";
 import { Post } from "../types";
 import Tiptap from "./Tiptap";
 import { CldImage } from "next-cloudinary";
+import useSWR, { useSWRConfig } from "swr";
+import fetcher from "../lib/fetcher";
 
 type AdminPostProps = {
   userId: number;
-  post: Post;
+  fallbackPost: Post;
 };
 
 const Section = styled(Flex)`
@@ -62,11 +64,44 @@ const onEditClick = () => {
 };
 
 const AdminPost = (props: AdminPostProps) => {
-  const {
-    post: { title, id, content, media },
-    userId,
-  } = props;
+  const { userId, fallbackPost } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { mutate } = useSWRConfig();
+
+  const { data, isLoading } = useSWR(`/api/posts/${fallbackPost.id}`, fetcher, {
+    fallbackData: fallbackPost,
+  });
+
+  if (isLoading || !data) {
+    return null;
+  }
+
+  const { title, id: postId, content, media, authorId } = data;
+
+  const handleDelete = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    fetch(`/api/posts/${postId}`, {
+      method: "DELETE",
+    });
+    mutate(
+      `/api/posts/${postId}`
+      // {
+      //   // optimisticData: (posts: Post[]) => ({
+      //   //   ...posts.filter((post: Post) => post.id !== id),
+      //   // }),
+      //   optimisticData: (posts: Post[]) => {
+      //     const newPosts = posts.filter((post: Post) => post.id !== id);
+      //     return newPosts;
+      //   },
+      //   revalidate: false,
+      //   // optimisticData: (posts) => {
+      //   //   posts.filter((post) => post.id !== id);
+      //   // },
+      //   rollbackOnError: true,
+      // }
+    );
+  };
+
   //   const [editing, setEditing] = useState(false);
   const trimmedTitle = Boolean(title)
     ? title.length < 20
@@ -80,7 +115,7 @@ const AdminPost = (props: AdminPostProps) => {
 
   return (
     <PreviewContainer>
-      <Preview key={id}>
+      <Preview key={postId}>
         {media.length > 0 && (
           <ImagePreview
             alt="Post image"
@@ -132,7 +167,11 @@ const AdminPost = (props: AdminPostProps) => {
         >
           Edit Images
         </Button>
-        <Button leftIcon={<DeleteIcon />} colorScheme="red" onClick={onOpen}>
+        <Button
+          leftIcon={<DeleteIcon />}
+          colorScheme="red"
+          onClick={handleDelete}
+        >
           Delete
         </Button>
       </ButtonGroup>

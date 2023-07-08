@@ -39,9 +39,7 @@ const PostsLoading = ({ numberSkeletons }) => {
 const url = "/api/posts";
 
 export type FetchConfig = {
-  headers: {
-    "x-subdomain": string;
-  };
+  method: string;
 };
 export const fetcher = (url: string, config: FetchConfig) =>
   fetch(url, config).then((res) => res.json());
@@ -66,9 +64,7 @@ const Posts = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   });
 
   const fetcherConfig = {
-    headers: {
-      "x-subdomain": currentFeed,
-    },
+    method: "GET",
   };
 
   const { fallback, posts } = data;

@@ -126,7 +126,7 @@ export const NavBar = () => {
   const router = useRouter();
   const { pathname } = router;
 
-  console.log("isClaimed: ", isClaimed);
+  // console.log("isClaimed: ", isClaimed);
   // console.log("owner: ", owner);
   // console.log("pathname: ", pathname);
 

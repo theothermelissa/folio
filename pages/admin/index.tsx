@@ -17,6 +17,9 @@ import {
   SidebarSectionLink,
   allAdminSections,
 } from "../../components/admin-sections";
+import useSWR from "swr";
+import { FetchConfig } from "../feed/[subdomain]/posts";
+import fetcher from "../../lib/fetcher";
 
 async function doesSessionExist() {
   if (await Session.doesSessionExist()) {
@@ -111,9 +114,50 @@ const AdminBody = ({ sections, onScrollIntoView }) => {
   );
 };
 
-const Admin = ({ userData }) => {
+const Admin = ({ fallbackUserData }) => {
   const [currentSection, setCurrentSection] = useState("");
-  if (!userData) return <div>Loading...</div>;
+  const { data: userData } = useSWR(
+    `/api/users/${fallbackUserData.id}`,
+    fetcher,
+    {
+      fallbackData: fallbackUserData,
+      refreshInterval: 5000,
+    }
+  );
+  // console.log("userData in Admin Index: ", userData);
+  const { id } = userData;
+  const { data: postsData } = useSWR(`/api/users/${id}/posts`, fetcher, {
+    fallbackData: fallbackUserData.posts,
+    refreshInterval: 5000,
+  });
+  const { data: feedsData } = useSWR(`/api/users/${id}/feeds`, fetcher, {
+    fallbackData: fallbackUserData.posts,
+    refreshInterval: 5000,
+  });
+  console.log(
+    "fallbackUserData.posts in Admin Index: ",
+    fallbackUserData.posts
+  );
+  console.log("postsData in Admin Index: ", postsData);
+  // const { data: feedsData } = useSWR(
+  //   "/api/user",
+  //   () => fetcher(`/api/users/${fallbackUserData.id}`, fetcherConfig),
+  //   {
+  //     fallbackData: fallbackUserData,
+  //     refreshInterval: 5000,
+  //   }
+  // );
+
+  const fetcherConfig = {
+    method: "GET",
+  };
+
+  const onDeletePost = async (id: number) => {
+    console.log("deleting post: ", id);
+    await fetch(`/api/posts/${id}`, { method: "DELETE" });
+    // mutate(`/api/users/${authorId}`, { data });
+  };
+  if (!userData || !fallbackUserData) return <div>Loading...</div>;
 
   const onScrollIntoView = (id: string) => {
     const baseId = id.replace("-section", "");
@@ -123,11 +167,11 @@ const Admin = ({ userData }) => {
   return (
     <View>
       <AdminSidebar
-        sections={allAdminSections(userData)}
+        sections={allAdminSections({ userData, postsData, feedsData })}
         currentSection={currentSection}
       />
       <AdminBody
-        sections={allAdminSections(userData)}
+        sections={allAdminSections({ userData, postsData, feedsData })}
         onScrollIntoView={onScrollIntoView}
       />
     </View>
@@ -137,7 +181,9 @@ const Admin = ({ userData }) => {
 Admin.getLayout = function getLayout(page: React.ReactElement) {
   return (
     <PageLayout>
-      <Protected>{page}</Protected>
+      {/* <Protected> */}
+      {page}
+      {/* </Protected> */}
     </PageLayout>
   );
 };
@@ -151,28 +197,27 @@ export const getServerSideProps = async (
   // const protocol = process.env.NEXT_PUBLIC_BASE_PROTOCOL;
   // const urlPath = process.env.NEXT_PUBLIC_BASE_URL_PATH;
   // const fullHomePath = `${protocol}${urlPath}`;
-  supertokensNode.init(backendConfig());
-  let session: ServerSession.SessionContainer;
+  // supertokensNode.init(backendConfig());
+  // let session: ServerSession.SessionContainer;
 
-  try {
-    session = await ServerSession.getSession(context.req, context.res, {
-      overrideGlobalClaimValidators: () => {
-        return [];
-      },
-    });
-    console.log("session inside try/catch: ", session);
-  } catch (err: any) {
-    console.log("error in serverSideProps: ", err.type, " ", err.message);
-    if (err.type === ServerSession.Error.TRY_REFRESH_TOKEN) {
-      return { props: { fromSupertokens: "needs-refresh" } };
-    } else if (err.type === ServerSession.Error.UNAUTHORISED) {
-      return { props: { fromSupertokens: "needs-refresh" } };
-    }
-  }
+  // try {
+  //   session = await ServerSession.getSession(context.req, context.res, {
+  //     overrideGlobalClaimValidators: () => {
+  //       return [];
+  //     },
+  //   });
+  //   console.log("session inside try/catch: ", session);
+  // } catch (err: any) {
+  //   console.log("error in serverSideProps: ", err.type, " ", err.message);
+  //   if (err.type === ServerSession.Error.TRY_REFRESH_TOKEN) {
+  //     return { props: { fromSupertokens: "needs-refresh" } };
+  //   } else if (err.type === ServerSession.Error.UNAUTHORISED) {
+  //     return { props: { fromSupertokens: "needs-refresh" } };
+  //   }
+  // }
 
   // const userId: string = session!.getUserId();
   const userId = 2;
-  console.log("userId in admin serverSideProps: ", userId);
 
   const data = await prisma.user.findUnique({
     where: {
@@ -185,12 +230,12 @@ export const getServerSideProps = async (
       projects: true,
     },
   });
-  console.log("userData: ", SuperJSON.parse(SuperJSON.stringify(data)));
+  // console.log("userData: ", SuperJSON.parse(SuperJSON.stringify(data)));
   const userData = SuperJSON.parse(SuperJSON.stringify(data));
 
   return {
     props: {
-      userData: userData,
+      fallbackUserData: userData,
     },
   };
 };
