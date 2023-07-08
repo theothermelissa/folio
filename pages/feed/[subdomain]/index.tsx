@@ -52,13 +52,16 @@ export async function getStaticProps(context: GetStaticPropsContext) {
       owner: true,
     },
   });
-  const owner = SuperJSON.parse(SuperJSON.stringify(result.owner)) as User;
+  let owner: User | undefined;
+  if (result && result.owner) {
+    owner = SuperJSON.parse(SuperJSON.stringify(result.owner)) as User;
+  }
 
   return {
     props: {
       subdomain: subdomain.toString(),
       owner: owner,
-      claimed: Boolean(owner.authId),
+      claimed: Boolean(owner && owner.authId),
     },
     // revalidate: 5,
   };

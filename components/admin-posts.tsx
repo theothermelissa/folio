@@ -45,7 +45,7 @@ const onEditClick = () => {
 
 const AdminPosts = (props: AdminAllPostsProps) => {
   const { posts, userId } = props;
-  console.log("userId: ", userId);
+  // console.log("userId: ", userId);
   return (
     <Section>
       {posts.map((post) => (

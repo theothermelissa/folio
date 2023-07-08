@@ -123,12 +123,12 @@ export const NavBar = () => {
   const [currentFeed] = useAtom(currentFeedAtom);
   const [isClaimed] = useAtom(isClaimedAtom);
   const [pages] = useAtom(pagesAtom);
+  const router = useRouter();
+  const { pathname } = router;
+
   // console.log("props: ", props);
   // console.log("owner: ", owner);
-  const router = useRouter();
-
-  const { pathname } = router;
-  console.log("pathname: ", pathname);
+  // console.log("pathname: ", pathname);
 
   const endPath = pathname.replace("/feed/[subdomain]", "");
   const currentPath = endPath.length > 0 ? endPath : "/";
@@ -137,8 +137,7 @@ export const NavBar = () => {
     <Nav as="header" boxShadow="md">
       <NavTabs>
         {pages.map((page) => {
-          console.log("page: ", page);
-          return <PageLink page={page} currentPath={currentPath} />;
+          return <PageLink page={page} currentPath={currentPath} key={page} />;
         })}
       </NavTabs>
       <PageName name={currentFeed} />

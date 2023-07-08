@@ -1,6 +1,5 @@
 import { Button, Flex } from "@chakra-ui/react";
 import styled from "@emotion/styled";
-import Link from "next/link";
 import React from "react";
 import { ClaimFeed } from "../components/admin-claim-feed";
 

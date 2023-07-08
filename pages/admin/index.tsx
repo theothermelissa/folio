@@ -4,17 +4,19 @@ import supertokensNode from "supertokens-node";
 import { backendConfig } from "../../config/backendConfig";
 import { signOut } from "supertokens-auth-react/recipe/passwordless";
 import PageLayout from "../../layouts/page-layout";
-import { Box, Button, Flex, Heading, Stack, Text } from "@chakra-ui/react";
+import { Button, Flex } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import { NAVBAR_HEIGHT } from "../../constants";
 import prisma from "../../lib/prisma";
 import { GetServerSidePropsContext } from "next";
-import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Session from "supertokens-web-js/recipe/session";
-import { EditAccountValue } from "../../components/EditAccountValue";
-import AdminPosts from "../../components/admin-posts";
 import SuperJSON from "superjson";
+import {
+  Section,
+  SidebarSectionLink,
+  allAdminSections,
+} from "../../components/admin-sections";
 
 async function doesSessionExist() {
   if (await Session.doesSessionExist()) {
@@ -39,21 +41,10 @@ const Sidebar = styled(Flex)`
   border-right: 1px solid ghostwhite;
 `;
 
-const SidebarItem = styled(Flex)`
-  width: 100%;
-  flex-direction: column;
-  justify-content: flex-start;
-`;
-
 const View = styled(Flex)`
   height: 100vh;
   width: 100vw;
   flex-flow: row nowrap;
-`;
-
-const LinkTarget = styled.div`
-  position: relative;
-  top: calc(-${NAVBAR_HEIGHT}px - 10px);
 `;
 
 const Body = styled(Flex)`
@@ -64,36 +55,6 @@ const Body = styled(Flex)`
   // scroll-behavior: smooth;
   // scroll-margin-top: ${NAVBAR_HEIGHT}px;
 `;
-
-const SidebarSectionLink = ({
-  currentSection,
-  section: { label, id, subsections },
-}) => {
-  const weight = (string1, string2) =>
-    string1 === string2 ? "bold" : "normal";
-  return (
-    <SidebarItem>
-      <Stack direction="column" width="100%" spacing="0px">
-        <Link href={`#${id}`}>
-          <Text fontSize="md" fontWeight={weight(currentSection, id)}>
-            {label}
-          </Text>
-        </Link>
-        {subsections.map(({ id, label }) => (
-          <Link
-            key={`${id}-section-link`}
-            style={{ marginLeft: "12px" }}
-            href={`#${id}`}
-          >
-            <Text fontSize="sm" fontWeight={weight(currentSection, id)}>
-              {label}
-            </Text>
-          </Link>
-        ))}
-      </Stack>
-    </SidebarItem>
-  );
-};
 
 const AdminSidebar = ({ currentSection, sections }) => {
   return (
@@ -115,53 +76,6 @@ const AdminSidebar = ({ currentSection, sections }) => {
         Sign Out
       </Button>
     </Sidebar>
-  );
-};
-
-const Section = ({ label, children, id, onScrollIntoView, isSub }) => {
-  const sectionRef = useRef(null);
-  useEffect(() => {
-    const handleScroll = () => {
-      const position = sectionRef.current.getBoundingClientRect().top.toFixed();
-      // if (id === "posts-section" || id === "posts") {
-      if (position < 65) {
-        if (position > 50) {
-          console.log(id, " position: ", position);
-          onScrollIntoView(id);
-        }
-      }
-    };
-    // };
-    handleScroll();
-
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  const as = () => (isSub ? "h3" : "h2");
-  const size = () => (isSub ? "xl" : "2xl");
-  const style = () =>
-    isSub
-      ? { margin: "12px 0px 8px 0px" }
-      : { margin: "50px 0px 8px 0px", color: "black" };
-
-  return (
-    <>
-      <LinkTarget id={id} />
-      <Box width="100%" ref={sectionRef}>
-        <Heading
-          // as={as()}
-          fontSize={size()}
-          style={style()}
-          color="dimgrey"
-        >
-          {label}
-        </Heading>
-        {children}
-      </Box>
-    </>
   );
 };
 
@@ -201,117 +115,21 @@ const Admin = ({ userData }) => {
   const [currentSection, setCurrentSection] = useState("");
   if (!userData) return <div>Loading...</div>;
 
-  const { id, email, name, image, projects, posts, phone, ownedFeeds, feeds } =
-    userData;
-
   const onScrollIntoView = (id: string) => {
     const baseId = id.replace("-section", "");
     setCurrentSection(baseId);
   };
 
-  const sections = [
-    {
-      label: "Account Information",
-      id: "account-information",
-      subsections: [
-        {
-          label: "Your Name",
-          id: "username",
-          component: (
-            <EditAccountValue
-              userId={id}
-              keyToUpdate={"name"}
-              currentValue={name || ""}
-            />
-          ),
-        },
-        {
-          label: "Your Email",
-          id: "email",
-          component: (
-            <EditAccountValue
-              userId={id}
-              keyToUpdate={"email"}
-              currentValue={email || ""}
-            />
-          ),
-        },
-        // TODO: disable phone number edit until user has verified email
-        {
-          label: "Phone",
-          id: "phone",
-          component: (
-            <EditAccountValue
-              userId={id}
-              keyToUpdate={"phone"}
-              currentValue={phone || ""}
-            />
-          ),
-        },
-      ],
-    },
-    {
-      label: "Tags & Channels",
-      id: "tags-and-channels",
-      subsections: [],
-      component: (
-        <Text minHeight="500px" fontSize="md">
-          Tags & Channels Component (coming ... soon ... ish.)
-        </Text>
-      ),
-    },
-    {
-      label: "Posts",
-      id: "posts",
-      subsections: [],
-      component: <AdminPosts posts={posts} userId={id} />,
-    },
-    {
-      label: "Feeds",
-      id: "feeds",
-      subsections: [
-        {
-          label: "Create New Feed",
-          id: "create-new-feed",
-          component: (
-            <Text minHeight="500px" fontSize="md">
-              Create New Feed component (...also coming soon)
-            </Text>
-          ),
-        },
-        {
-          label: "Feeds You Own",
-          id: "owned-feeds",
-          component: (
-            <Box minHeight="500px">
-              {ownedFeeds &&
-                ownedFeeds.map((feed) => (
-                  <Text key={feed.subdomain} fontSize="md">
-                    {feed.subdomain}
-                  </Text>
-                ))}
-            </Box>
-          ),
-        },
-        {
-          label: "Contributing Feeds",
-          id: "contributing-feeds",
-          component: (
-            <Box minHeight="500px">
-              {feeds.length > ownedFeeds && (
-                <Text fontSize="md">Yep you are a contributor.</Text>
-              )}
-            </Box>
-          ),
-        },
-      ],
-    },
-  ];
-
   return (
     <View>
-      <AdminSidebar sections={sections} currentSection={currentSection} />
-      <AdminBody sections={sections} onScrollIntoView={onScrollIntoView} />
+      <AdminSidebar
+        sections={allAdminSections(userData)}
+        currentSection={currentSection}
+      />
+      <AdminBody
+        sections={allAdminSections(userData)}
+        onScrollIntoView={onScrollIntoView}
+      />
     </View>
   );
 };
@@ -319,7 +137,9 @@ const Admin = ({ userData }) => {
 Admin.getLayout = function getLayout(page: React.ReactElement) {
   return (
     <PageLayout>
-      <Protected>{page}</Protected>
+      {/* <Protected> */}
+      {page}
+      {/* </Protected> */}
     </PageLayout>
   );
 };

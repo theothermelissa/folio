@@ -18,6 +18,7 @@ import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 import { Post } from "../types";
 import Tiptap from "./Tiptap";
+import { CldImage } from "next-cloudinary";
 
 type AdminPostProps = {
   userId: number;
@@ -44,10 +45,11 @@ const Preview = styled(Flex)`
   gap: 8px;
 `;
 
-const Image = styled.div`
-  background-color: gainsboro;
-  height: 100%;
+const ImagePreview = styled(CldImage)`
+  height: auto;
   width: 60px;
+  min-width: 60px;
+  // object-fit: cover;
 `;
 
 const Content = styled(Flex)`
@@ -60,22 +62,41 @@ const onEditClick = () => {
 };
 
 const AdminPost = (props: AdminPostProps) => {
-  const { post, userId } = props;
+  const {
+    post: { title, id, content, media },
+    userId,
+  } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
-
   //   const [editing, setEditing] = useState(false);
+  const trimmedTitle = Boolean(title)
+    ? title.length < 20
+      ? title
+      : title.slice(0, 20) + "..."
+    : "Untitled";
+  const trimmedContent =
+    content.length < 145 ? content : content.slice(0, 144) + "...";
 
-  console.log("userId: ", userId);
+  // console.log("userId: ", userId);
+
   return (
     <PreviewContainer>
-      <Preview key={post.id}>
-        {/* <Image /> */}
+      <Preview key={id}>
+        {media.length > 0 && (
+          <ImagePreview
+            alt="Post image"
+            src={media[0]}
+            width={60}
+            height={60}
+          />
+        )}
         <Flex direction="column">
-          <Text as="h2" fontSize="xl">
-            {post.title ? post.title : "Untitled"}
+          <Text as="h2" fontSize="md" fontWeight="bold">
+            {trimmedTitle}
           </Text>
           <Content>
-            <Text>{post.content}</Text>
+            <Text fontSize="sm" noOfLines={1}>
+              {trimmedContent}
+            </Text>
           </Content>
         </Flex>
       </Preview>

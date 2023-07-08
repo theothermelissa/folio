@@ -6,12 +6,8 @@ import { SupertokensService } from "supertokens-node/recipe/passwordless/smsdeli
 import Dashboard from "supertokens-node/recipe/dashboard";
 import prisma from "../lib/prisma";
 
-const {
-  SUPERTOKENS_URI,
-  SUPERTOKENS_API_KEY,
-  SUPERTOKENS_SMS_API_KEY,
-  NEXT_PUBLIC_BASE_URL_PATH,
-} = process.env;
+const { SUPERTOKENS_URI, SUPERTOKENS_API_KEY, SUPERTOKENS_SMS_API_KEY } =
+  process.env;
 
 export const backendConfig = (): TypeInput => {
   return {
