@@ -60,7 +60,10 @@ const Content = styled(Flex)`
 `;
 
 const AdminPost = (props: AdminPostProps) => {
-  const { userId, fallbackPost } = props;
+  const {
+    // userId,
+    fallbackPost,
+  } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { mutate } = useSWRConfig();
 
