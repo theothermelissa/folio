@@ -5,12 +5,12 @@ generator client {
 }
 
 datasource db {
-  provider          = "postgresql"
+  provider  = "postgresql"
   // this is from when we weren't using prisma data platform
   // url               = env("POSTGRES_PRISMA_URL")
-  url               = env("PRISMA_CONNECTION_URL")
-  directUrl         = env("POSTGRES_URL_NON_POOLING")
-  shadowDatabaseUrl = env("POSTGRES_SHADOW_URL_NON_POOLING")
+  url       = env("PRISMA_CONNECTION_URL")
+  directUrl = env("MIGRATE_DATABASE_URL")
+  // shadowDatabaseUrl = env("POSTGRES_SHADOW_URL_NON_POOLING")
 }
 
 model User {

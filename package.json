@@ -6,7 +6,7 @@
 
         "vercel-build": "npm run prisma:generate && npm run prisma:migrate && next build",
         "prisma:generate": "prisma generate --data-proxy",
-        "prisma:migrate": "DATABASE_URL=\"$POSTGRES_URL_NON_POOLING\" prisma migrate deploy",
+        "prisma:migrate": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate deploy",
 
         "start": "next start",
         "gen:theme-typings": "chakra-cli tokens app/theme.ts"
