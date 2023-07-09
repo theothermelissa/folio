@@ -11,7 +11,7 @@ export const config = {
      * 3. /examples (inside /public)
      * 4. all root files inside /public (e.g. /favicon.ico)
      */
-    "/((?!api/|admin/|auth/|_next/|_static/|examples/|[\\w-]+\\.\\w+).*)",
+    "/((?!admin/|auth/|_next/|_static/|examples/|[\\w-]+\\.\\w+).*)",
   ],
 };
 
@@ -22,14 +22,11 @@ export default async function middleware(req: NextRequest) {
   const requestSubdomain = hostname.split(".")[0];
   const path = url.pathname;
 
-  // console.log("url in middleware: ", url);
+  // console.log("url in middleware: ", url.toString());
   // console.log("hostname in middleware: ", hostname);
   // console.log("origin in middleware: ", origin);
   // console.log("requestSubdomain in middleware: ", requestSubdomain);
   // console.log("path in middleware: ", path);
-
-  // const res = NextResponse.next();
-  // res.headers.set("x-subdomain", requestSubdomain);
 
   const currentHost =
     process.env.NODE_ENV === "production" && process.env.VERCEL === "1"
@@ -55,6 +52,22 @@ export default async function middleware(req: NextRequest) {
     // } else {
     //   // console.log("origin is NOT included");
     // }
+  }
+
+  if (path.includes("/api/")) {
+    // console.log("currentHost in if api: ", currentHost);
+
+    // console.log("api path found in middleware");
+    // const res = NextResponse.next();
+    const newHeaders = new Headers(req.headers);
+    newHeaders.set("x-subdomain", requestSubdomain);
+    const newUrl = new URL(path, req.url);
+    // console.log("newUrl in if api: ", newUrl.toString());
+    return NextResponse.rewrite(newUrl, {
+      request: {
+        headers: newHeaders,
+      },
+    });
   }
   // TODO mpm: use this in future for admin route, etc.
   // rewrites for app pages

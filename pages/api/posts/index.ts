@@ -10,6 +10,8 @@ export default async function handler(
   if (request.method === "GET") {
     // TODO mpm: add handling for getting all/multiple feed posts
     const subdomain = request.headers["x-subdomain"];
+
+    // console.log("request: ", request)
     if (!subdomain) {
       throw new Error("No subdomain in request");
     }
