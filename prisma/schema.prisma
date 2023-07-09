@@ -5,13 +5,21 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  // this is from when we weren't using prisma data platform
-  // url               = env("POSTGRES_PRISMA_URL")
-  url       = env("PRISMA_CONNECTION_URL")
-  directUrl = env("MIGRATE_DATABASE_URL")
-  // shadowDatabaseUrl = env("POSTGRES_SHADOW_URL_NON_POOLING")
+  provider          = "postgresql"
+  url               = env("POSTGRES_PRISMA_PROXY_URL") // uses connection pooling
+  directUrl         = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING") // used for migrations
 }
+
+// deprecated
+// datasource db {
+//   provider          = "postgresql"
+//   // this is from when we weren't using prisma data platform
+//   // url               = env("POSTGRES_PRISMA_URL")
+//   url               = env("PRISMA_CONNECTION_URL")
+//   directUrl         = env("POSTGRES_URL_NON_POOLING")
+//   shadowDatabaseUrl = env("POSTGRES_SHADOW_URL_NON_POOLING")
+// }
 
 model User {
   id         Int            @id @default(autoincrement())
