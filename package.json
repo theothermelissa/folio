@@ -1,7 +1,7 @@
 {
     "private": true,
     "scripts": {
-        "dev": "prisma generate && next dev",
+        "dev": "prisma generate --data-proxy && next dev",
         "build": "prisma generate && prisma db push && next build",
         "start": "next start",
         "gen:theme-typings": "chakra-cli tokens app/theme.ts"
