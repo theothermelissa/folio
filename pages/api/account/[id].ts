@@ -7,7 +7,7 @@ export default async function handler(
   response: NextApiResponse
 ) {
   const userId = request.query.id;
-  console.log("query: ", request.query);
+  // console.log("query: ", request.query);
   if (request.method === "GET") {
     try {
       const posts = await prisma?.user.findUnique({
@@ -47,7 +47,7 @@ export default async function handler(
       }
     }
     try {
-      console.log("making server call to update user");
+      // console.log("making server call to update user");
       await prisma?.user.update({
         where: {
           id: parseInt(userId.toString()),
@@ -56,7 +56,7 @@ export default async function handler(
           [keyToUpdate]: updatedValue,
         },
       });
-      console.log("update request sent");
+      // console.log("update request sent");
       response
         .status(200)
         ?.json({ message: `${keyToUpdate} update request complete.` });

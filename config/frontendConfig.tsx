@@ -14,13 +14,13 @@ export const frontendConfig = () => {
         contactMethod: "EMAIL_OR_PHONE",
         getRedirectionURL: async (context) => {
           if (context.action === "SUCCESS") {
-            console.log("Successfully logged in");
+            // console.log("Successfully logged in");
             if (context.redirectToPath !== undefined) {
-              console.log("redirectToPath: ", context.redirectToPath);
+              // console.log("redirectToPath: ", context.redirectToPath);
               // we are navigating back to where the user was before they authenticated
               return context.redirectToPath;
             }
-            console.log("no redirectToPath, going to admin");
+            // console.log("no redirectToPath, going to admin");
             return "/admin";
           }
           return undefined;

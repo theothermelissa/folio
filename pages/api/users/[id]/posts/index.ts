@@ -14,7 +14,7 @@ export default async function handler(
       break;
     }
     case "DELETE": {
-      console.log("api call to delete");
+      // console.log("api call to delete");
       await deletePost(request, response);
       break;
     }

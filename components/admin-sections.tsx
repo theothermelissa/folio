@@ -87,16 +87,6 @@ export const allAdminSections = (props: AdminSectionProps) => {
       ],
     },
     {
-      label: "Tags & Channels",
-      id: "tags-and-channels",
-      subsections: [],
-      component: (
-        <Text minHeight="500px" fontSize="md">
-          Tags & Channels Component (coming ... soon ... ish.)
-        </Text>
-      ),
-    },
-    {
       label: "Posts",
       id: "posts",
       subsections: [],
@@ -107,19 +97,10 @@ export const allAdminSections = (props: AdminSectionProps) => {
       id: "feeds",
       subsections: [
         {
-          label: "Create New Feed",
-          id: "create-new-feed",
-          component: (
-            <Text minHeight="500px" fontSize="md">
-              Create New Feed component (...also coming soon)
-            </Text>
-          ),
-        },
-        {
           label: "Your Feeds",
-          id: "feeds",
+          id: "your-feeds",
           component: (
-            <Box minHeight="500px">
+            <Box>
               {feeds &&
                 feeds.map((feed) => (
                   <Text key={feed.subdomain} fontSize="md">
@@ -127,6 +108,25 @@ export const allAdminSections = (props: AdminSectionProps) => {
                   </Text>
                 ))}
             </Box>
+          ),
+        },
+        {
+          label: "Create New Feed",
+          id: "create-new-feed",
+          component: (
+            <Text fontSize="md">
+              Create New Feed component (...also coming soon)
+            </Text>
+          ),
+        },
+        {
+          label: "Tags & Channels",
+          id: "tags-and-channels",
+          subsections: [],
+          component: (
+            <Text fontSize="md">
+              Tags & Channels Component (coming ... soon ... ish.)
+            </Text>
           ),
         },
       ],

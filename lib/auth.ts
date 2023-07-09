@@ -13,13 +13,13 @@ export async function handleOTPInput(otp: string) {
 
     if (response.status === "OK") {
       if (response.createdNewUser) {
-        console.log("Welcome to Folio!");
+        // console.log("Welcome to Folio!");
         // user sign up success -- trigger onboarding
       } else {
-        console.log("Welcome back!");
+        // console.log("Welcome back!");
         // user sign in success -- leave them alone
       }
-      console.log("response: ", response);
+      // console.log("response: ", response);
       return response;
     } else if (response.status === "INCORRECT_USER_INPUT_CODE_ERROR") {
       // the user entered an invalid OTP

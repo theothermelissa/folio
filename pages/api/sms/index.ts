@@ -52,7 +52,7 @@ async function getUserOnFeed(props: FeedProps) {
   } else {
     let feedName = await getUniqueFeedName();
     newAccount = true;
-    console.log("creating new feedName: ", feedName);
+    // console.log("creating new feedName: ", feedName);
     const newRecord = await prisma?.usersOnFeeds.create({
       data: {
         feedPhone: to,
@@ -109,7 +109,7 @@ async function createPost(props: PostProps) {
     },
   });
 
-  console.log("full userOnFeed: ", userOnFeed);
+  // console.log("full userOnFeed: ", userOnFeed);
 
   const newPost = await prisma?.post.create({
     data: {
@@ -129,8 +129,8 @@ async function createPost(props: PostProps) {
       },
     },
   });
-  console.log("newPost: ", newPost);
-  console.log("Feed: ", uniqueFeedName, " isNew: ", newAccount);
+  // console.log("newPost: ", newPost);
+  // console.log("Feed: ", uniqueFeedName, " isNew: ", newAccount);
   return newPost;
 }
 
@@ -138,7 +138,7 @@ export default async function handler(
   request: NextApiRequest,
   response: NextApiResponse
 ) {
-  console.log("request.body in handler: ", request.body);
+  // console.log("request.body in handler: ", request.body);
   if (request.method === "POST") {
     const { title, date, author, to, content, media, textMessageId } =
       await JSON.parse(request.body);
@@ -147,7 +147,7 @@ export default async function handler(
     }
 
     const userOnFeed = await getUserOnFeed({ to, from: author });
-    console.log("userOnFeed in handler: ", userOnFeed);
+    // console.log("userOnFeed in handler: ", userOnFeed);
 
     try {
       const resultFromPrisma = await createPost({
@@ -155,7 +155,7 @@ export default async function handler(
         textMessageId: textMessageId,
         message: { title, content, media },
       });
-      console.log("resultFromPrisma in handler: ", resultFromPrisma);
+      // console.log("resultFromPrisma in handler: ", resultFromPrisma);
       response.status(200).json({
         feedUrl: `${NEXT_PUBLIC_BASE_PROTOCOL}${uniqueFeedName}.${NEXT_PUBLIC_BASE_URL_PATH}/posts`,
         isNewFeed: newAccount,

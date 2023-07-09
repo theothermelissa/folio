@@ -23,25 +23,25 @@ export const EditAccountSubdomain = ({ id, currentSubdomain }) => {
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
     setDesiredSubdomain(desiredSubdomain);
-    console.log(
-      "new Subdomain for user ",
-      id,
-      " should change to ",
-      desiredSubdomain
-    );
+    // console.log(
+    //   "new Subdomain for user ",
+    //   id,
+    //   " should change to ",
+    //   desiredSubdomain
+    // );
     onChangeSubdomain().then(({ isFinishedEditing }) => {
-      console.log("isFinishedEditing is ", isFinishedEditing);
+      // console.log("isFinishedEditing is ", isFinishedEditing);
       setIsEditing(!isFinishedEditing);
     });
   };
 
   const onChangeSubdomain = async () => {
-    console.log("updating Subdomain to ", desiredSubdomain);
+    // console.log("updating Subdomain to ", desiredSubdomain);
     const result = await fetch(`/api/account/${id}`, {
       method: "PUT",
       body: desiredSubdomain,
     });
-    console.log("result of update call is ", result);
+    // console.log("result of update call is ", result);
     return { isFinishedEditing: result.status === 200 };
   };
 

@@ -7,7 +7,7 @@ export default async function getPost(
 ) {
   const id = request.query.id;
 
-  console.log(">>>>>>>>>> GETTING POSTS FOR THIS USER <<<<<<<<<<<");
+  // console.log(">>>>>>>>>> GETTING POSTS FOR THIS USER <<<<<<<<<<<");
 
   try {
     const posts = await prisma?.post.findMany({
@@ -15,7 +15,7 @@ export default async function getPost(
         authorId: parseInt(id.toString()),
       },
     });
-    console.log("POSTS IN GET: ", posts);
+    // console.log("POSTS IN GET: ", posts);
     response.status(200).json(posts);
   } catch (error) {
     response.status(500).json({ error: error.message });

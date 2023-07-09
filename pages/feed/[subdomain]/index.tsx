@@ -18,7 +18,7 @@ const Feed: NextPageWithLayout = (
   const [currentFeed] = useAtom(currentFeedAtom);
   const [isClaimed] = useAtom(isClaimedAtom);
   // console.log("currentFeed from atom: ", currentFeed);
-  console.log("isClaimed from atom: ", isClaimed);
+  // console.log("isClaimed from atom: ", isClaimed);
 
   return <p>This is the subdomain index: {subdomain}</p>;
 };

@@ -20,8 +20,8 @@ export async function getStaticProps() {
 }
 
 export default function Home({ protocol, urlPath }) {
-  console.log("protocol: ", protocol);
-  console.log("urlPath: ", urlPath);
+  // console.log("protocol: ", protocol);
+  // console.log("urlPath: ", urlPath);
   const path = `${protocol}demo.${urlPath}/posts`;
 
   return (

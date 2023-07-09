@@ -100,7 +100,7 @@ export async function getStaticProps(context: GetStaticPropsContext) {
   const {
     params: { id, subdomain },
   } = context;
-  console.log("getting post: ", id);
+  // console.log("getting post: ", id);
   const result = await prisma.post.findUnique({
     where: {
       id: parseInt(id.toString()),

@@ -59,10 +59,6 @@ const Content = styled(Flex)`
   align-items: flex-end;
 `;
 
-const onEditClick = () => {
-  console.log("edit clicked");
-};
-
 const AdminPost = (props: AdminPostProps) => {
   const { userId, fallbackPost } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();

@@ -138,7 +138,7 @@ const Admin = ({ fallbackUserData }) => {
     "fallbackUserData.posts in Admin Index: ",
     fallbackUserData.posts
   );
-  console.log("postsData in Admin Index: ", postsData);
+  // console.log("postsData in Admin Index: ", postsData);
   // const { data: feedsData } = useSWR(
   //   "/api/user",
   //   () => fetcher(`/api/users/${fallbackUserData.id}`, fetcherConfig),
@@ -153,7 +153,7 @@ const Admin = ({ fallbackUserData }) => {
   };
 
   const onDeletePost = async (id: number) => {
-    console.log("deleting post: ", id);
+    // console.log("deleting post: ", id);
     await fetch(`/api/posts/${id}`, { method: "DELETE" });
     // mutate(`/api/users/${authorId}`, { data });
   };
@@ -179,6 +179,9 @@ const Admin = ({ fallbackUserData }) => {
 };
 
 Admin.getLayout = function getLayout(page: React.ReactElement) {
+  if (process.env.NODE_ENV === "development") {
+    return <PageLayout>{page}</PageLayout>;
+  }
   return (
     <PageLayout>
       <Protected>{page}</Protected>
@@ -191,35 +194,44 @@ export default Admin;
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  console.log("calling serverSideProps");
+  // console.log("calling serverSideProps");
   const protocol = process.env.NEXT_PUBLIC_BASE_PROTOCOL;
   const urlPath = process.env.NEXT_PUBLIC_BASE_URL_PATH;
   const fullHomePath = `${protocol}${urlPath}`;
-  supertokensNode.init(backendConfig());
-  let session: ServerSession.SessionContainer;
 
-  try {
-    session = await ServerSession.getSession(context.req, context.res, {
-      overrideGlobalClaimValidators: () => {
-        return [];
-      },
-    });
-    console.log("session inside try/catch: ", session);
-  } catch (err: any) {
-    console.log("error in serverSideProps: ", err.type, " ", err.message);
-    if (err.type === ServerSession.Error.TRY_REFRESH_TOKEN) {
-      return { props: { fromSupertokens: "needs-refresh" } };
-    } else if (err.type === ServerSession.Error.UNAUTHORISED) {
-      return { props: { fromSupertokens: "needs-refresh" } };
+  let id = 0;
+  let authId = "";
+  let userId = {};
+
+  if (process.env.NODE_ENV === "production") {
+    supertokensNode.init(backendConfig());
+    let session: ServerSession.SessionContainer;
+
+    try {
+      session = await ServerSession.getSession(context.req, context.res, {
+        overrideGlobalClaimValidators: () => {
+          return [];
+        },
+      });
+      // console.log("session inside try/catch: ", session);
+    } catch (err: any) {
+      // console.log("error in serverSideProps: ", err.type, " ", err.message);
+      if (err.type === ServerSession.Error.TRY_REFRESH_TOKEN) {
+        return { props: { fromSupertokens: "needs-refresh" } };
+      } else if (err.type === ServerSession.Error.UNAUTHORISED) {
+        return { props: { fromSupertokens: "needs-refresh" } };
+      }
     }
-  }
+    authId = session!.getUserId();
+    userId = { authId: authId };
+  } else id = 2;
+  userId = { id: id };
 
-  const userId: string = session!.getUserId();
   // const userId = 2;
 
   const data = await prisma.user.findUnique({
     where: {
-      authId: userId,
+      ...userId,
     },
     include: {
       feeds: true,

@@ -43,7 +43,7 @@ export const ClaimFeed = () => {
   // TODO mpm: refactor this to be handled in the handleChangeCode function
   useEffect(() => {
     if (code.length > 5) {
-      console.log("code length reached");
+      // console.log("code length reached");
       setLoading(true);
       setShowCodeInput(false);
       handleSubmitCode();
@@ -73,9 +73,9 @@ export const ClaimFeed = () => {
     }
     if (data) {
       const { phone } = data;
-      console.log("phone: ", phone);
+      // console.log("phone: ", phone);
       const result = await sendOTP(phone);
-      console.log("result of sendOTP: ", result);
+      // console.log("result of sendOTP: ", result);
       if (result && result.status === "OK") {
         setLoading(false);
         setShowCodeInput(true);

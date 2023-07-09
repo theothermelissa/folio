@@ -29,18 +29,18 @@ export const backendConfig = (): TypeInput => {
                 if (originalImplementation.createCodePOST === undefined) {
                   throw new Error("Should never come here");
                 }
-                console.log("first, calling createCodePOST");
+                // console.log("first, calling createCodePOST");
                 return originalImplementation.createCodePOST(input);
               },
               consumeCodePOST: async function (input) {
-                console.log("next, calling customCodePOST");
+                // console.log("next, calling customCodePOST");
                 if (originalImplementation.consumeCodePOST === undefined) {
                   throw new Error("Should never come here");
                 }
                 let resp = await originalImplementation.consumeCodePOST(input);
                 // add the successfully logged in user's authId to their user record
                 if (resp.status === "OK") {
-                  console.log("resp: ", resp);
+                  // console.log("resp: ", resp);
                   const { user } = resp;
                   await prisma.user.update({
                     where: {

@@ -23,7 +23,7 @@ export const CreatePost = () => {
 
   const handleSubmit = (e: React.BaseSyntheticEvent) => {
     e.preventDefault();
-    console.log("adding post");
+    // console.log("adding post");
     // addPost({ title });
   };
 
@@ -42,7 +42,7 @@ export const CreatePost = () => {
 export const DeletePost = (props: DeletePostProps) => {
   const { id } = props;
   const handleClick = () => {
-    console.log("deleting ", id);
+    // console.log("deleting ", id);
     // removePost(id);
   };
   return <button onClick={handleClick}>Delete Post</button>;
@@ -51,7 +51,7 @@ export const DeletePost = (props: DeletePostProps) => {
 export const UpdatePost = (props: UpdatePostProps) => {
   const { id, data } = props;
   const handleClick = () => {
-    console.log("updating ", id);
+    // console.log("updating ", id);
     // editPost(id, data);
   };
   return <button onClick={handleClick}>Update Post</button>;

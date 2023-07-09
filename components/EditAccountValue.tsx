@@ -10,7 +10,7 @@ import {
   IconButton,
   Text,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const shouldBeUnique = (keyToUpdate: string) => {
   switch (keyToUpdate) {
@@ -28,7 +28,7 @@ const updateUserRecord = async (
   keyToUpdate: string,
   value: string
 ) => {
-  console.log("updating ", keyToUpdate, " value to ", value);
+  // console.log("updating ", keyToUpdate, " value to ", value);
 
   const result = await fetch(`/api/account/${userId}`, {
     method: "PUT",
@@ -38,26 +38,40 @@ const updateUserRecord = async (
       shouldBeUnique: shouldBeUnique(keyToUpdate),
     }),
   });
-  console.log("result of update call is ", result);
+  // console.log("result of update call is ", result);
   return { isFinishedEditing: result.status === 200 };
 };
 
 export function EditAccountValue({ userId, keyToUpdate, currentValue }) {
   const [value, setValue] = useState(currentValue);
+  const [tempValue, setTempValue] = useState(currentValue);
   const [editing, setEditing] = useState(false);
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (editing && inputRef != null) {
+      inputRef.current.focus();
+    }
+  }, [editing, inputRef]);
 
   const onEditClick = () => {
     setEditing(true);
   };
 
+  const handleBlur = () => {
+    setValue(currentValue);
+    setTempValue(currentValue);
+    setEditing(false);
+  };
+
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
     setEditing(false);
-    setValue(value);
-    console.log("new value for ", keyToUpdate, " should change to ", value);
+    setValue(tempValue);
+    // console.log("new value for ", keyToUpdate, " should change to ", tempValue);
     updateUserRecord(userId, keyToUpdate, value).then(
       ({ isFinishedEditing }) => {
-        console.log("isFinishedEditing is ", isFinishedEditing);
+        // console.log("isFinishedEditing is ", isFinishedEditing);
         setEditing(!isFinishedEditing);
       }
     );
@@ -68,16 +82,18 @@ export function EditAccountValue({ userId, keyToUpdate, currentValue }) {
       {editing ? (
         <form onSubmit={handleSubmit}>
           <FormControl>
-            <FormLabel>Name</FormLabel>
+            {/* <FormLabel>Name</FormLabel> */}
             <Input
               type="text"
               // placeholder={value}
-              value={value}
+              onBlur={handleBlur}
+              ref={inputRef}
+              value={tempValue}
               onChange={(e: React.FormEvent<HTMLInputElement>) =>
-                setValue(e.currentTarget.value)
+                setTempValue(e.currentTarget.value)
               }
             />
-            <FormHelperText>The question is, 🦉 whooo are YOU?</FormHelperText>
+            {/* <FormHelperText>The question is, 🦉 whooo are YOU?</FormHelperText> */}
           </FormControl>
           <Button type="submit">Submit</Button>
         </form>

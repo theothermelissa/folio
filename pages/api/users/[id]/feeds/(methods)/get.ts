@@ -7,7 +7,7 @@ export default async function getFeed(
 ) {
   const id = request.query.id;
 
-  console.log(">>>>>>>>>> GETTING FEEDS FOR THIS USER <<<<<<<<<<<");
+  // console.log(">>>>>>>>>> GETTING FEEDS FOR THIS USER <<<<<<<<<<<");
 
   try {
     const feeds = await prisma?.feed.findMany({
@@ -15,7 +15,7 @@ export default async function getFeed(
         ownerId: parseInt(id.toString()),
       },
     });
-    console.log("FEEDS IN GET: ", feeds);
+    // console.log("FEEDS IN GET: ", feeds);
     response.status(200).json(feeds);
   } catch (error) {
     response.status(500).json({ error: error.message });
