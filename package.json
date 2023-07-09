@@ -2,7 +2,12 @@
     "private": true,
     "scripts": {
         "dev": "prisma generate --data-proxy && next dev",
-        "build": "prisma generate --data-proxy && prisma db push && next build",
+        "build": "prisma generate && prisma db push && next build",
+
+        "vercel-build": "npm run prisma:generate && npm run prisma:migrate && next build",
+        "prisma:generate": "prisma generate --data-proxy",
+        "prisma:migrate": "DATABASE_URL=\"$POSTGRES_URL_NON_POOLING\" prisma migrate deploy",
+
         "start": "next start",
         "gen:theme-typings": "chakra-cli tokens app/theme.ts"
     },

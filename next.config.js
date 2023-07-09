@@ -4,6 +4,7 @@ const { withSuperjson } = require('next-superjson')
 const { NEXT_PUBLIC_BASE_PROTOCOL, NEXT_PUBLIC_BASE_URL_PATH } = process.env
 
 const nextConfig = {
+    // runtime: 'edge',
   reactStrictMode: true,
   async headers() {
       return [

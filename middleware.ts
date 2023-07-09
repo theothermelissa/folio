@@ -13,6 +13,9 @@ export const config = {
      */
     "/((?!admin/|auth/|_next/|_static/|examples/|[\\w-]+\\.\\w+).*)",
   ],
+  // experimental: {
+  //   runtime: "experimental-edge",
+  // },
 };
 
 export default async function middleware(req: NextRequest) {

@@ -2,6 +2,10 @@ import { NextApiRequest, NextApiResponse } from "next";
 import get from "./(methods)/get";
 import deletePost from "./(methods)/delete";
 
+// export const config = {
+//   runtime: "edge",
+// };
+
 export default async function handler(
   request: NextApiRequest,
   response: NextApiResponse

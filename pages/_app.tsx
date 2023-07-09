@@ -14,6 +14,10 @@ if (typeof window !== "undefined") {
   SuperTokensReact.init(frontendConfig());
 }
 
+// export const config = {
+//   runtime: "edge",
+// };
+
 function MyApp({ Component, pageProps }): JSX.Element {
   const getLayout = Component.getLayout ?? ((page: NextPageWithLayout) => page);
 
