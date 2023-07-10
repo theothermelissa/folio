@@ -11,6 +11,7 @@ import prisma from "../../../../lib/prisma";
 import styled from "@emotion/styled";
 import SuperJSON from "superjson";
 import { Post as PostType } from "../../../../types";
+import { useRouter } from "next/router";
 
 const Hero = styled(CldImage)`
   height: 100%;
@@ -50,14 +51,21 @@ const Post = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
     subdomain,
     author,
     claimed,
+    fullHomePath,
     post: { title, content, media, publishedDate },
   } = props;
+
   useHydrateAtoms([
     [currentFeedAtom, subdomain],
     [isClaimedAtom, claimed],
   ]);
   const [currentFeed] = useAtom(currentFeedAtom);
   const [isClaimed] = useAtom(currentFeedAtom);
+  const router = useRouter();
+
+  if (typeof window !== "undefined" && !subdomain) {
+    router.push(fullHomePath);
+  }
 
   return (
     <Flex flexDirection="column" width="100%" alignItems="center">
@@ -82,6 +90,7 @@ export async function getStaticPaths() {
   });
   // todo: better types from prisma results
   // console.log("result: ", result);
+
   const paths = result.map((post: any) => {
     if (!post.feed) {
       return { params: { id: post.id.toString(), subdomain: "default" } };
@@ -100,6 +109,11 @@ export async function getStaticProps(context: GetStaticPropsContext) {
   const {
     params: { id, subdomain },
   } = context;
+
+  const protocol = process.env.NEXT_PUBLIC_BASE_PROTOCOL;
+  const urlPath = process.env.NEXT_PUBLIC_BASE_URL_PATH;
+  const fullHomePath = `${protocol}${urlPath}`;
+
   // console.log("getting post: ", id);
   const result = await prisma.post.findUnique({
     where: {
@@ -117,6 +131,7 @@ export async function getStaticProps(context: GetStaticPropsContext) {
         post: result,
       },
       subdomain: subdomain.toString(),
+      fullHomePath,
       author: result.author,
       claimed: Boolean(result.author.authId),
       post: SuperJSON.parse(SuperJSON.stringify(result)) as PostType,

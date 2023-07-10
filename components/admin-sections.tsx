@@ -45,6 +45,9 @@ export const allAdminSections = (props: AdminSectionProps) => {
   const { id, email, name, image, projects, phone } = props.userData;
   const posts = props.postsData;
   const feeds = props.feedsData;
+
+  const hasPosts = posts && posts.length > 0;
+  const hasFeeds = feeds && feeds.length > 0;
   return [
     {
       label: "Account Information",
@@ -101,7 +104,7 @@ export const allAdminSections = (props: AdminSectionProps) => {
           id: "your-feeds",
           component: (
             <Box>
-              {feeds &&
+              {hasFeeds &&
                 feeds.map((feed) => (
                   <Text key={feed.subdomain} fontSize="md">
                     {feed.subdomain}

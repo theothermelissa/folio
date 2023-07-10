@@ -24,8 +24,10 @@ export default async function middleware(req: NextRequest) {
   const origin = url.origin;
   const requestSubdomain = hostname.split(".")[0];
   const path = url.pathname;
+  // const domainSegmentsCount = origin.toString().match(".").length;
 
   // console.log("url in middleware: ", url.toString());
+  // console.log("domainSegmentsCount: ", domainSegmentsCount);
   // console.log("hostname in middleware: ", hostname);
   // console.log("origin in middleware: ", origin);
   // console.log("requestSubdomain in middleware: ", requestSubdomain);

@@ -53,16 +53,17 @@ const AdminPostList = (props: AdminAllPostsProps) => {
     keepPreviousData: true,
   });
 
-  if (!Boolean(posts.length) && !Boolean(fallbackPosts.length)) {
-    return null;
-  }
+  const hasPosts =
+    (posts && posts.length > 0) || (fallbackPosts && fallbackPosts.length > 0);
+
   // console.log("userId: ", userId);
 
   return (
     <Section>
-      {posts.map((post) => (
-        <AdminPost key={post.id} userId={userId} fallbackPost={post} />
-      ))}
+      {hasPosts &&
+        posts.map((post) => (
+          <AdminPost key={post.id} userId={userId} fallbackPost={post} />
+        ))}
     </Section>
   );
 };

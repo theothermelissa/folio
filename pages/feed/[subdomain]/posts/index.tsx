@@ -4,7 +4,6 @@ import { Box, Flex, Grid, Skeleton } from "@chakra-ui/react";
 import { GetStaticPropsContext, InferGetStaticPropsType } from "next/types";
 import prisma from "../../../../lib/prisma";
 import useSWR from "swr";
-// import { useRouter } from "next/router";
 import { useAtom } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 import { currentFeedAtom, isClaimedAtom } from "../../../../atoms/atoms";
@@ -48,7 +47,7 @@ const Posts = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { subdomain, owner, claimed, fullHomePath } = props;
   const router = useRouter();
 
-  if (!subdomain) {
+  if (typeof window !== "undefined" && !subdomain) {
     router.push(fullHomePath);
   }
 
