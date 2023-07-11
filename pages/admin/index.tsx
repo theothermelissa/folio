@@ -224,10 +224,10 @@ export const getServerSideProps = async (
     }
     authId = session!.getUserId();
     userId = { authId: authId };
-  } else id = 2;
+  } else id = 1;
   userId = { id: id };
 
-  // const userId = 2;
+  // const userId = 1;
 
   const data = await prisma.user.findUnique({
     where: {

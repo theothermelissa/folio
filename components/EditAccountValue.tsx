@@ -44,7 +44,6 @@ const updateUserRecord = async (
 
 export function EditAccountValue({ userId, keyToUpdate, currentValue }) {
   const [value, setValue] = useState(currentValue);
-  const [tempValue, setTempValue] = useState(currentValue);
   const [editing, setEditing] = useState(false);
   const inputRef = useRef(null);
 
@@ -60,14 +59,12 @@ export function EditAccountValue({ userId, keyToUpdate, currentValue }) {
 
   const handleBlur = () => {
     setValue(currentValue);
-    setTempValue(currentValue);
     setEditing(false);
   };
 
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
     setEditing(false);
-    setValue(tempValue);
     // console.log("new value for ", keyToUpdate, " should change to ", tempValue);
     updateUserRecord(userId, keyToUpdate, value).then(
       ({ isFinishedEditing }) => {
@@ -88,9 +85,9 @@ export function EditAccountValue({ userId, keyToUpdate, currentValue }) {
               // placeholder={value}
               onBlur={handleBlur}
               ref={inputRef}
-              value={tempValue}
+              value={value}
               onChange={(e: React.FormEvent<HTMLInputElement>) =>
-                setTempValue(e.currentTarget.value)
+                setValue(e.currentTarget.value)
               }
             />
             {/* <FormHelperText>The question is, 🦉 whooo are YOU?</FormHelperText> */}

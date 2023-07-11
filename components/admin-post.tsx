@@ -41,8 +41,8 @@ const PreviewContainer = styled(Flex)`
 
 const Preview = styled(Flex)`
   background-color: white;
-  width: 40%;
-  height: 80px;
+  width: 90%;
+  height: 150px;
   padding: 8px;
   gap: 8px;
 `;
@@ -123,15 +123,42 @@ const AdminPost = (props: AdminPostProps) => {
             height={60}
           />
         )}
-        <Flex direction="column">
-          <Text as="h2" fontSize="md" fontWeight="bold">
-            {trimmedTitle}
-          </Text>
-          <Content>
-            <Text fontSize="sm" noOfLines={1}>
-              {trimmedContent}
+        <Flex direction="column" m="12px">
+          <Flex alignItems="center" justifyContent="center">
+            <Text as="h2" fontSize="md" fontWeight="bold">
+              {trimmedTitle}
             </Text>
+            <IconButton
+              aria-label="edit-title"
+              size="sm"
+              variant="ghost"
+              icon={<EditIcon />}
+              onClick={onOpen}
+            />
+          </Flex>
+          <Content>
+            <Flex alignItems="center" justifyContent="center">
+              <Text fontSize="sm" noOfLines={1}>
+                {trimmedContent}
+              </Text>
+              <IconButton
+                aria-label="edit-content"
+                size="sm"
+                variant="ghost"
+                icon={<EditIcon />}
+                onClick={onOpen}
+              />
+            </Flex>
           </Content>
+          <Button
+            position="relative"
+            style={{ top: 0, right: 0 }}
+            leftIcon={<DeleteIcon />}
+            colorScheme="red"
+            onClick={handleDelete}
+          >
+            Delete
+          </Button>
         </Flex>
       </Preview>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -151,29 +178,6 @@ const AdminPost = (props: AdminPostProps) => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <ButtonGroup size="sm" variant="outline">
-        <Button leftIcon={<EditIcon />} color="dimgrey" onClick={onOpen}>
-          Edit Title
-        </Button>
-        <Button leftIcon={<EditIcon />} color="dimgrey" onClick={onOpen}>
-          Edit Content
-        </Button>
-        <Button
-          isDisabled
-          leftIcon={<EditIcon />}
-          color="dimgrey"
-          onClick={onOpen}
-        >
-          Edit Images
-        </Button>
-        <Button
-          leftIcon={<DeleteIcon />}
-          colorScheme="red"
-          onClick={handleDelete}
-        >
-          Delete
-        </Button>
-      </ButtonGroup>
     </PreviewContainer>
   );
 };
