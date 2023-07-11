@@ -8,18 +8,13 @@ import prisma from "../../../lib/prisma";
 import { useRouter } from "next/router";
 
 const About = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
-  const { subdomain, owner, claimed, fullHomePath } = props;
-  const router = useRouter();
+  const { subdomain, owner, claimed } = props;
   useHydrateAtoms([
     [currentFeedAtom, subdomain],
     [isClaimedAtom, claimed],
   ]);
   const [currentFeed] = useAtom(currentFeedAtom);
   const [isClaimed] = useAtom(isClaimedAtom);
-
-  if (typeof window !== "undefined" && !subdomain) {
-    router.push(fullHomePath);
-  }
 
   return <h1>{`About for ${currentFeed} go here`}</h1>;
 };
@@ -45,10 +40,6 @@ export async function getStaticProps(context: GetStaticPropsContext) {
     params: { subdomain },
   } = context;
 
-  const protocol = process.env.NEXT_PUBLIC_BASE_PROTOCOL;
-  const urlPath = process.env.NEXT_PUBLIC_BASE_URL_PATH;
-  const fullHomePath = `${protocol}${urlPath}`;
-
   const result = await prisma.feed.findUnique({
     where: {
       subdomain: subdomain.toString(),
@@ -62,7 +53,6 @@ export async function getStaticProps(context: GetStaticPropsContext) {
       subdomain: subdomain.toString(),
       owner: result.owner,
       claimed: Boolean(result.owner.authId),
-      fullHomePath,
     },
     revalidate: 10,
   };

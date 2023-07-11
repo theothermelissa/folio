@@ -51,7 +51,6 @@ const Post = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
     subdomain,
     author,
     claimed,
-    fullHomePath,
     post: { title, content, media, publishedDate },
   } = props;
 
@@ -61,11 +60,6 @@ const Post = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   ]);
   const [currentFeed] = useAtom(currentFeedAtom);
   const [isClaimed] = useAtom(currentFeedAtom);
-  const router = useRouter();
-
-  if (typeof window !== "undefined" && !subdomain) {
-    router.push(fullHomePath);
-  }
 
   return (
     <Flex flexDirection="column" width="100%" alignItems="center">
@@ -110,10 +104,6 @@ export async function getStaticProps(context: GetStaticPropsContext) {
     params: { id, subdomain },
   } = context;
 
-  const protocol = process.env.NEXT_PUBLIC_BASE_PROTOCOL;
-  const urlPath = process.env.NEXT_PUBLIC_BASE_URL_PATH;
-  const fullHomePath = `${protocol}${urlPath}`;
-
   // console.log("getting post: ", id);
   const result = await prisma.post.findUnique({
     where: {
@@ -131,7 +121,6 @@ export async function getStaticProps(context: GetStaticPropsContext) {
         post: result,
       },
       subdomain: subdomain.toString(),
-      fullHomePath,
       author: result.author,
       claimed: Boolean(result.author.authId),
       post: SuperJSON.parse(SuperJSON.stringify(result)) as PostType,

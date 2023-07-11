@@ -9,7 +9,6 @@ import { useHydrateAtoms } from "jotai/utils";
 import { currentFeedAtom, isClaimedAtom } from "../../../../atoms/atoms";
 import SuperJSON from "superjson";
 import { Post, User } from "../../../../types";
-import { useRouter } from "next/router";
 
 const PostSkeleton = ({ height }) => (
   <Flex style={{ breakInside: "avoid", padding: "8px" }}>
@@ -44,12 +43,7 @@ export const fetcher = (url: string, config: FetchConfig) =>
   fetch(url, config).then((res) => res.json());
 
 const Posts = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
-  const { subdomain, owner, claimed, fullHomePath } = props;
-  const router = useRouter();
-
-  if (typeof window !== "undefined" && !subdomain) {
-    router.push(fullHomePath);
-  }
+  const { subdomain, owner, claimed } = props;
 
   useHydrateAtoms([
     [currentFeedAtom, subdomain],
@@ -108,9 +102,8 @@ export async function getStaticProps(context: GetStaticPropsContext) {
   const {
     params: { subdomain },
   } = context;
-  const protocol = process.env.NEXT_PUBLIC_BASE_PROTOCOL;
-  const urlPath = process.env.NEXT_PUBLIC_BASE_URL_PATH;
-  const fullHomePath = `${protocol}${urlPath}`;
+  // console.log("subdomain in getStaticProps: ", subdomain);
+
   const result = await prisma?.feed.findUnique({
     where: {
       subdomain: subdomain.toString(),
@@ -121,13 +114,7 @@ export async function getStaticProps(context: GetStaticPropsContext) {
     },
   });
 
-  if (!result) {
-    return {
-      props: {
-        fullHomePath,
-      },
-    };
-  }
+  // console.log("result: ", result);
 
   const posts = SuperJSON.parse(SuperJSON.stringify(result.posts)) as Post[];
   const owner = SuperJSON.parse(SuperJSON.stringify(result.owner)) as User;
@@ -141,7 +128,6 @@ export async function getStaticProps(context: GetStaticPropsContext) {
       claimed: Boolean(owner.authId),
       subdomain: subdomain.toString(),
       posts: posts,
-      fullHomePath,
     },
     // revalidate: 5,
   };
