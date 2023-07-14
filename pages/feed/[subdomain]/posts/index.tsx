@@ -1,40 +1,12 @@
-import PostItem from "../../../../components/posts/post-feed-item";
 import FeedLayout from "../../../../layouts/feed-layout";
-import { Box, Flex, Grid, Skeleton } from "@chakra-ui/react";
 import { GetStaticPropsContext, InferGetStaticPropsType } from "next/types";
 import prisma from "../../../../lib/prisma";
 import useSWR from "swr";
-import { useAtom } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 import { currentFeedAtom, isClaimedAtom } from "../../../../atoms/atoms";
 import SuperJSON from "superjson";
 import { Post, User } from "../../../../types";
-
-const PostSkeleton = ({ height }) => (
-  <Flex style={{ breakInside: "avoid", padding: "8px" }}>
-    <Skeleton flex="1" height={height} />
-  </Flex>
-);
-
-const getRandomHeightString = ({ min, max }) => {
-  const heightString = Math.round(Math.random() * (max - min) + min).toString();
-  return heightString;
-};
-
-const PostsLoading = ({ numberSkeletons }) => {
-  let fakePosts = [] as JSX.Element[];
-
-  for (let i = 0; i < numberSkeletons; i++) {
-    fakePosts.push(
-      <PostSkeleton
-        key={`post-skeleton-${i}`}
-        height={getRandomHeightString({ min: 180, max: 450 })}
-      />
-    );
-  }
-  return <Grid>{fakePosts.map((p) => p)}</Grid>;
-};
-const url = "/api/posts";
+import PostsContent from "../../../../components/feed-posts-content";
 
 export type FetchConfig = {
   method: string;
@@ -49,8 +21,8 @@ const Posts = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
     [currentFeedAtom, subdomain],
     [isClaimedAtom, claimed],
   ]);
-  const [currentFeed] = useAtom(currentFeedAtom);
-  const [isClaimed] = useAtom(isClaimedAtom);
+  const url = "/api/posts";
+
   const { data } = useSWR(url, () => fetcher(url, fetcherConfig), {
     fallbackData: props,
     refreshInterval: 5000,
@@ -62,21 +34,7 @@ const Posts = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
 
   const { fallback, posts } = data;
 
-  return (
-    <Box
-      padding={0}
-      w="100%"
-      mx="auto"
-      sx={{ columnCount: [1, 2, 3, 4, 5], columnGap: "12px" }}
-      margin="0px 16px"
-    >
-      {posts && posts.length > 0 ? (
-        posts.map((post) => <PostItem key={post.id} post={post} />)
-      ) : (
-        <PostsLoading numberSkeletons={13} />
-      )}
-    </Box>
-  );
+  return <PostsContent posts={posts} />;
 };
 
 Posts.getLayout = function getLayout(page: React.ReactElement) {

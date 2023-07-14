@@ -1,14 +1,14 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import prisma from "../../../../../lib/prisma";
+import prisma from "../../../../lib/prisma";
 
-export default async function getPostById(
+export default async function getFeedById(
   request: NextApiRequest,
   response: NextApiResponse
 ) {
   const id = request.query.id;
 
   try {
-    const posts = await prisma?.post.findUnique({
+    const posts = await prisma?.feed.findUnique({
       where: {
         id: parseInt(id.toString()),
       },

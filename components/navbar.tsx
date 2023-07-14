@@ -37,7 +37,8 @@ const Nav = styled(Flex)`
   align-items: center;
   z-index: ${TOP_Z_INDEX};
   padding: 0px 12px;
-  height: ${NAVBAR_HEIGHT}px;
+  height÷: ${NAVBAR_HEIGHT}px;
+  height: 55px;
 `;
 
 const PageNameWrapper = styled(Flex)`
@@ -122,24 +123,24 @@ const PageLink = (props: PageLinkProps) => {
 export const NavBar = () => {
   const [currentFeed] = useAtom(currentFeedAtom);
   const [isClaimed] = useAtom(isClaimedAtom);
-  const [pages] = useAtom(pagesAtom);
-  const router = useRouter();
-  const { pathname } = router;
+  // const [pages] = useAtom(pagesAtom);
+  // const router = useRouter();
+  // const { pathname } = router;
 
   // console.log("isClaimed: ", isClaimed);
   // console.log("owner: ", owner);
   // console.log("pathname: ", pathname);
 
-  const endPath = pathname.replace("/feed/[subdomain]", "");
-  const currentPath = endPath.length > 0 ? endPath : "/";
+  // const endPath = pathname.replace("/feed/[subdomain]", "");
+  // const currentPath = endPath.length > 0 ? endPath : "/";
 
   return (
     <Nav as="header" boxShadow="md">
-      <NavTabs>
+      {/* <NavTabs>
         {pages.map((page) => {
           return <PageLink page={page} currentPath={currentPath} key={page} />;
         })}
-      </NavTabs>
+      </NavTabs> */}
       <PageName name={currentFeed} />
       {isClaimed ? (
         <SettingsMenu>

@@ -30,14 +30,14 @@ export default async function handler(
     const { keyToUpdate, updatedValue, shouldBeUnique } = JSON.parse(
       request.body
     );
-    console.log(
-      "request received to update user ",
-      userId,
-      "'s ",
-      keyToUpdate,
-      " to ",
-      updatedValue
-    );
+    // console.log(
+    //   "request received to update user ",
+    //   userId,
+    //   "'s ",
+    //   keyToUpdate,
+    //   " to ",
+    //   updatedValue
+    // );
     if (shouldBeUnique) {
       const isUnique = verifyUnique(updatedValue, keyToUpdate);
       if (!isUnique) {
@@ -61,7 +61,8 @@ export default async function handler(
         .status(200)
         ?.json({ message: `${keyToUpdate} update request complete.` });
     } catch (error) {
-      response.status(500).json({ error: error.message });
+      // console.log("error in api call: ", error);
+      response.status(500).json({ error: error });
     }
   }
 }

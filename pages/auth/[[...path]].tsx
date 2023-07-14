@@ -2,7 +2,6 @@ import Head from "next/head";
 import React, { useEffect } from "react";
 import styles from "../../styles/Home.module.css";
 import dynamic from "next/dynamic";
-import SuperTokens from "supertokens-auth-react";
 import { canHandleRoute, getRoutingComponent } from "supertokens-auth-react/ui";
 import { PreBuiltUIList } from "../../config/frontendConfig";
 import { redirectToAuth } from "supertokens-auth-react";

@@ -1,17 +1,14 @@
-// import { useRouter } from "next/router";
 import { Flex, Heading, Text } from "@chakra-ui/react";
 import { GetStaticPropsContext, InferGetStaticPropsType } from "next/types";
 import { CldImage } from "next-cloudinary";
 import { useAtom } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 import { currentFeedAtom, isClaimedAtom } from "../../../../atoms/atoms";
-// import FeedLayout from "../../../../layouts/feed-layout";
 import PostLayout from "../../../../layouts/post-layout";
 import prisma from "../../../../lib/prisma";
 import styled from "@emotion/styled";
 import SuperJSON from "superjson";
 import { Post as PostType } from "../../../../types";
-import { useRouter } from "next/router";
 
 const Hero = styled(CldImage)`
   height: 100%;

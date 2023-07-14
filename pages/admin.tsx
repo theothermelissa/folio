@@ -1,14 +1,13 @@
-import Protected from "../../components/protected-page";
+import Protected from "../components/protected-page";
 import ServerSession from "supertokens-node/recipe/session";
 import supertokensNode from "supertokens-node";
-import { backendConfig } from "../../config/backendConfig";
+import backendConfig from "../config/backendConfig";
 import { signOut } from "supertokens-auth-react/recipe/passwordless";
-import PageLayout from "../../layouts/page-layout";
+import PageLayout from "../layouts/page-layout";
 import { Button, Flex } from "@chakra-ui/react";
 import styled from "@emotion/styled";
-import { NAVBAR_HEIGHT } from "../../constants";
-import prisma from "../../lib/prisma";
-import { GetServerSidePropsContext } from "next";
+import { NAVBAR_HEIGHT } from "../constants";
+import prisma from "../lib/prisma";
 import { useState } from "react";
 import Session from "supertokens-web-js/recipe/session";
 import SuperJSON from "superjson";
@@ -16,10 +15,10 @@ import {
   Section,
   SidebarSectionLink,
   allAdminSections,
-} from "../../components/admin-sections";
+} from "../components/admin-sections";
 import useSWR from "swr";
-import { FetchConfig } from "../feed/[subdomain]/posts";
-import fetcher from "../../lib/fetcher";
+import fetcher from "../lib/fetcher";
+import { GetServerSidePropsContext } from "next/types";
 
 async function doesSessionExist() {
   if (await Session.doesSessionExist()) {
@@ -134,10 +133,10 @@ const Admin = ({ fallbackUserData }) => {
     fallbackData: fallbackUserData.posts,
     refreshInterval: 5000,
   });
-  console.log(
-    "fallbackUserData.posts in Admin Index: ",
-    fallbackUserData.posts
-  );
+  // console.log(
+  //  "fallbackUserData.posts in Admin Index: ",
+  //   fallbackUserData.posts
+  // );
   // console.log("postsData in Admin Index: ", postsData);
   // const { data: feedsData } = useSWR(
   //   "/api/user",
@@ -202,6 +201,11 @@ export const getServerSideProps = async (
   let id = 0;
   let authId = "";
   let userId = {};
+
+  context.res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=1800, stale-while-revalidate=86400"
+  );
 
   if (process.env.NODE_ENV === "production") {
     supertokensNode.init(backendConfig());

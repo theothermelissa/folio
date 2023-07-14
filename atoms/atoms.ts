@@ -7,6 +7,8 @@ export const isClaimedAtom = atom(true);
 
 export const pagesAtom = atom(["posts", "contact"]);
 
+export const adminPostHoveredAtom = atom(0);
+
 // const readWriteAtom = atom(
 //   (get) => get(priceAtom) * 2,
 //   (get, set, newPrice) => {

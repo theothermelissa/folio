@@ -8,15 +8,10 @@ import theme from "../styles/theme";
 import { NextPageWithLayout } from "../types";
 import { frontendConfig } from "../config/frontendConfig";
 import { Provider } from "jotai";
-import { GetStaticPropsContext } from "next/types";
 
 if (typeof window !== "undefined") {
   SuperTokensReact.init(frontendConfig());
 }
-
-// export const config = {
-//   runtime: "edge",
-// };
 
 function MyApp({ Component, pageProps }): JSX.Element {
   const getLayout = Component.getLayout ?? ((page: NextPageWithLayout) => page);

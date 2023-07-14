@@ -9,7 +9,7 @@ import prisma from "../lib/prisma";
 const { SUPERTOKENS_URI, SUPERTOKENS_API_KEY, SUPERTOKENS_SMS_API_KEY } =
   process.env;
 
-export const backendConfig = (): TypeInput => {
+const backendConfig = (): TypeInput => {
   return {
     framework: "express",
     supertokens: {
@@ -69,3 +69,5 @@ export const backendConfig = (): TypeInput => {
     isInServerlessEnv: true,
   };
 };
+
+export default backendConfig;

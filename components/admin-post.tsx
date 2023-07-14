@@ -15,12 +15,15 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { Post } from "../types";
 import Tiptap from "./Tiptap";
 import { CldImage } from "next-cloudinary";
 import useSWR, { useSWRConfig } from "swr";
 import fetcher from "../lib/fetcher";
+import AdminEditPost from "./admin-edit-post";
+import { useAtom } from "jotai";
+import { adminPostHoveredAtom } from "../atoms/atoms";
 
 type AdminPostProps = {
   userId: number;
@@ -34,17 +37,19 @@ const Section = styled(Flex)`
 `;
 
 const PreviewContainer = styled(Flex)`
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-start;
-  gap: 8px;
+  width: 100%;
+  gap: 4px;
 `;
 
 const Preview = styled(Flex)`
   background-color: white;
-  width: 90%;
-  height: 150px;
-  padding: 8px;
+  width: 50%;
+  height: 90px;
+  // padding: 8px;
   gap: 8px;
+  border-radius: 8px;
 `;
 
 const ImagePreview = styled(CldImage)`
@@ -64,6 +69,7 @@ const AdminPost = (props: AdminPostProps) => {
     // userId,
     fallbackPost,
   } = props;
+  const [hovered, setHovered] = useAtom(adminPostHoveredAtom);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { mutate } = useSWRConfig();
 
@@ -82,26 +88,9 @@ const AdminPost = (props: AdminPostProps) => {
     fetch(`/api/posts/${postId}`, {
       method: "DELETE",
     });
-    mutate(
-      `/api/posts/${postId}`
-      // {
-      //   // optimisticData: (posts: Post[]) => ({
-      //   //   ...posts.filter((post: Post) => post.id !== id),
-      //   // }),
-      //   optimisticData: (posts: Post[]) => {
-      //     const newPosts = posts.filter((post: Post) => post.id !== id);
-      //     return newPosts;
-      //   },
-      //   revalidate: false,
-      //   // optimisticData: (posts) => {
-      //   //   posts.filter((post) => post.id !== id);
-      //   // },
-      //   rollbackOnError: true,
-      // }
-    );
+    mutate(`/api/posts/${postId}`);
   };
 
-  //   const [editing, setEditing] = useState(false);
   const trimmedTitle = Boolean(title)
     ? title.length < 20
       ? title
@@ -112,8 +101,23 @@ const AdminPost = (props: AdminPostProps) => {
 
   // console.log("userId: ", userId);
 
+  const onEditorSubmit = (event: FormEvent<HTMLDivElement>) => {
+    // e.preventDefault();
+    console.log("e: ", event);
+    // setEditing(true);
+  };
+
   return (
     <PreviewContainer>
+      <Flex direction="column" mt="4px">
+        <IconButton
+          colorScheme="red"
+          variant="ghost"
+          onClick={handleDelete}
+          icon={<DeleteIcon />}
+          aria-label={"delete post"}
+        />
+      </Flex>
       <Preview key={postId}>
         {media.length > 0 && (
           <ImagePreview
@@ -125,59 +129,40 @@ const AdminPost = (props: AdminPostProps) => {
         )}
         <Flex direction="column" m="12px">
           <Flex alignItems="center" justifyContent="center">
-            <Text as="h2" fontSize="md" fontWeight="bold">
-              {trimmedTitle}
-            </Text>
-            <IconButton
-              aria-label="edit-title"
+            {/* <IconButton
+              aria-label="edit-content"
               size="sm"
               variant="ghost"
               icon={<EditIcon />}
               onClick={onOpen}
-            />
+            /> */}
+            <Text as="h2" fontSize="md" fontWeight="bold">
+              {trimmedTitle}
+            </Text>
           </Flex>
           <Content>
             <Flex alignItems="center" justifyContent="center">
               <Text fontSize="sm" noOfLines={1}>
                 {trimmedContent}
               </Text>
-              <IconButton
-                aria-label="edit-content"
-                size="sm"
-                variant="ghost"
-                icon={<EditIcon />}
-                onClick={onOpen}
-              />
             </Flex>
           </Content>
-          <Button
-            position="relative"
-            style={{ top: 0, right: 0 }}
-            leftIcon={<DeleteIcon />}
-            colorScheme="red"
-            onClick={handleDelete}
-          >
-            Delete
-          </Button>
         </Flex>
       </Preview>
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Tiptap />
-          </ModalBody>
-
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button variant="ghost">Secondary Action</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      {/* <AdminEditPost
+        postElement="title"
+        postId={postId}
+        elementValue={title}
+        isOpen={isOpen}
+        onClose={onClose}
+      /> */}
+      {/* <AdminEditPost
+        postElement="content"
+        postId={postId}
+        elementValue={content}
+        isOpen={isOpen}
+        onClose={onClose}
+      /> */}
     </PreviewContainer>
   );
 };

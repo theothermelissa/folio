@@ -1,10 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import get from "./(methods)/get";
+import getPostById from "./(methods)/get";
 import deletePost from "./(methods)/delete";
-
-// export const config = {
-//   runtime: "edge",
-// };
 
 export default async function handler(
   request: NextApiRequest,
@@ -14,7 +10,7 @@ export default async function handler(
 
   switch (method) {
     case "GET": {
-      await get(request, response);
+      await getPostById(request, response);
       break;
     }
     case "DELETE": {

@@ -10,6 +10,7 @@ import { EditAccountValue } from "./EditAccountValue";
 import AdminPosts from "./admin-post-list";
 import { Feed, Post, User } from "../types";
 import AdminPostList from "./admin-post-list";
+import { EditFeedValue } from "./EditFeedValue";
 
 type UserData = {
   id: number;
@@ -106,9 +107,12 @@ export const allAdminSections = (props: AdminSectionProps) => {
             <Box>
               {hasFeeds &&
                 feeds.map((feed) => (
-                  <Text key={feed.subdomain} fontSize="md">
-                    {feed.subdomain}
-                  </Text>
+                  <EditFeedValue
+                    feedId={id}
+                    key={`feed-${feed.id}`}
+                    keyToUpdate={"subdomain"}
+                    currentValue={feed.subdomain}
+                  />
                 ))}
             </Box>
           ),
@@ -174,7 +178,7 @@ export const Section = ({ label, children, id, onScrollIntoView, isSub }) => {
       const position = sectionRef.current.getBoundingClientRect().top.toFixed();
       if (position < 65) {
         if (position > 50) {
-          console.log(id, " position: ", position);
+          // console.log(id, " position: ", position);
           onScrollIntoView(id);
         }
       }

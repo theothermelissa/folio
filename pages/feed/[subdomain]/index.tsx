@@ -1,36 +1,52 @@
-import FeedLayout from "../../../layouts/feed-layout";
-import { NextPageWithLayout, User } from "../../../types";
 import { GetStaticPropsContext, InferGetStaticPropsType } from "next/types";
-import { currentFeedAtom, isClaimedAtom } from "../../../atoms/atoms";
+import useSWR from "swr";
 import { useHydrateAtoms } from "jotai/utils";
-import { useAtom } from "jotai";
-import prisma from "../../../lib/prisma";
 import SuperJSON from "superjson";
+import { Post, User } from "@prisma/client";
+import { currentFeedAtom, isClaimedAtom } from "../../../atoms/atoms";
+import PostsContent from "../../../components/feed-posts-content";
+import FeedLayout from "../../../layouts/feed-layout";
+import prisma from "../../../lib/prisma";
 
-const Feed: NextPageWithLayout = (
-  props: InferGetStaticPropsType<typeof getStaticProps>
-) => {
+export type FetchConfig = {
+  method: string;
+};
+export const fetcher = (url: string, config: FetchConfig) =>
+  fetch(url, config).then((res) => res.json());
+
+const FeedIndex = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { subdomain, owner, claimed } = props;
+
   useHydrateAtoms([
     [currentFeedAtom, subdomain],
     [isClaimedAtom, claimed],
   ]);
-  const [currentFeed] = useAtom(currentFeedAtom);
-  const [isClaimed] = useAtom(isClaimedAtom);
-  // console.log("currentFeed from atom: ", currentFeed);
-  // console.log("isClaimed from atom: ", isClaimed);
+  const url = "/api/posts";
 
-  return <p>This is the subdomain index: {subdomain}</p>;
+  const { data } = useSWR(url, () => fetcher(url, fetcherConfig), {
+    fallbackData: props,
+    refreshInterval: 5000,
+  });
+
+  const fetcherConfig = {
+    method: "GET",
+  };
+
+  const { fallback, posts } = data;
+
+  return <PostsContent posts={posts} />;
 };
 
-Feed.getLayout = function getLayout(page: React.ReactElement) {
+FeedIndex.getLayout = function getLayout(page: React.ReactElement) {
   return <FeedLayout>{page}</FeedLayout>;
 };
 
-export default Feed;
+export default FeedIndex;
 
 export async function getStaticPaths() {
   const result = await prisma.feed.findMany({});
+
+  // todo: better types from prisma results
   const paths = result.map((feed: any) => ({
     params: { subdomain: feed.subdomain },
   }));
@@ -44,24 +60,32 @@ export async function getStaticProps(context: GetStaticPropsContext) {
   const {
     params: { subdomain },
   } = context;
-  const result = await prisma.feed.findUnique({
+  // console.log("subdomain in getStaticProps: ", subdomain);
+
+  const result = await prisma?.feed.findUnique({
     where: {
       subdomain: subdomain.toString(),
     },
     include: {
+      posts: true,
       owner: true,
     },
   });
-  let owner: User | undefined;
-  if (result && result.owner) {
-    owner = SuperJSON.parse(SuperJSON.stringify(result.owner)) as User;
-  }
+
+  // console.log("result: ", result);
+
+  const posts = SuperJSON.parse(SuperJSON.stringify(result.posts)) as Post[];
+  const owner = SuperJSON.parse(SuperJSON.stringify(result.owner)) as User;
 
   return {
     props: {
-      subdomain: subdomain.toString(),
+      // fallback: {
+      //   posts: result.posts,
+      // },
       owner: owner,
-      claimed: Boolean(owner && owner.authId),
+      claimed: Boolean(owner.authId),
+      subdomain: subdomain.toString(),
+      posts: posts,
     },
     // revalidate: 5,
   };

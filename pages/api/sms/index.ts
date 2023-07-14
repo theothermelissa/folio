@@ -96,12 +96,12 @@ type PostProps = {
 
 async function createPost(props: PostProps) {
   const { userOnFeedId, message } = props;
-  console.log(
-    "creating post with message: ",
-    message,
-    " and userOnFeedId: ",
-    userOnFeedId
-  );
+  // console.log(
+  //   "creating post with message: ",
+  //   message,
+  //   " and userOnFeedId: ",
+  //   userOnFeedId
+  // );
 
   const userOnFeed = await prisma?.usersOnFeeds.findUnique({
     where: {
