@@ -9,7 +9,9 @@ export default async function handler(
 
   switch (method) {
     case "GET": {
+      // console.log("getting user");
       await get(request, response);
+      // console.log("got user.");
       break;
     }
     default: {

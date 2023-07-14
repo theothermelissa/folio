@@ -77,12 +77,12 @@ const AdminEditPost = (props: EditPostProps) => {
   const { postElement, postId, elementValue, isOpen, onClose } = props;
 
   const onUpdate = (json: JSONContent) => {
-    console.log("nope");
+    // console.log("nope");
     // setDraftTitle(json.content);
   };
 
   const onContentUpdate = (update: any) => {
-    console.log("update: ", update);
+    // console.log("update: ", update);
   };
 
   function toTitleCase(str: string) {

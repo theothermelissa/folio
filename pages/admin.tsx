@@ -1,4 +1,5 @@
 import Protected from "../components/protected-page";
+
 import ServerSession from "supertokens-node/recipe/session";
 import supertokensNode from "supertokens-node";
 import backendConfig from "../config/backendConfig";
@@ -8,7 +9,7 @@ import { Button, Flex } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import { NAVBAR_HEIGHT } from "../constants";
 import prisma from "../lib/prisma";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Session from "supertokens-web-js/recipe/session";
 import SuperJSON from "superjson";
 import {
@@ -20,13 +21,17 @@ import useSWR from "swr";
 import fetcher from "../lib/fetcher";
 import { GetServerSidePropsContext } from "next/types";
 
-async function doesSessionExist() {
-  if (await Session.doesSessionExist()) {
-    // user is logged in
-  } else {
-    // user has not logged in yet
-  }
-}
+// async function doesSessionExist() {
+//   if (await Session.doesSessionExist()) {
+//     console.log("user session exists");
+//     return true;
+//     // user is logged in
+//   } else {
+//     console.log("user session DOES NOT exist");
+//     return false;
+//     // user has not logged in yet
+//   }
+// }
 
 const SIDEBAR_WIDTH = 312;
 
@@ -59,6 +64,10 @@ const Body = styled(Flex)`
 `;
 
 const AdminSidebar = ({ currentSection, sections }) => {
+  async function onLogout() {
+    await signOut();
+    window.location.href = "/";
+  }
   return (
     <Sidebar
     // boxShadow="md"
@@ -74,7 +83,7 @@ const AdminSidebar = ({ currentSection, sections }) => {
           );
         })}
       </Flex>
-      <Button width="120px" colorScheme="red" onClick={() => signOut()}>
+      <Button width="120px" colorScheme="red" onClick={onLogout}>
         Sign Out
       </Button>
     </Sidebar>
@@ -115,6 +124,15 @@ const AdminBody = ({ sections, onScrollIntoView }) => {
 
 const Admin = ({ fallbackUserData }) => {
   const [currentSection, setCurrentSection] = useState("");
+
+  // useEffect(() => {
+  //   const session = doesSessionExist();
+  //   if (!session) {
+  //     console.log("no session exists");
+  //   }
+  //   console.log("session: ", session);
+  // });
+
   const { data: userData } = useSWR(
     `/api/users/${fallbackUserData.id}`,
     fetcher,
@@ -198,6 +216,8 @@ export const getServerSideProps = async (
   const urlPath = process.env.NEXT_PUBLIC_BASE_URL_PATH;
   const fullHomePath = `${protocol}${urlPath}`;
 
+  // console.log("getting serverSideProps for admin page");
+
   let id = 0;
   let authId = "";
   let userId = {};
@@ -207,33 +227,39 @@ export const getServerSideProps = async (
     "public, s-maxage=1800, stale-while-revalidate=86400"
   );
 
-  if (process.env.NODE_ENV === "production") {
-    supertokensNode.init(backendConfig());
-    let session: ServerSession.SessionContainer;
+  // if (process.env.NODE_ENV === "production") {
+  supertokensNode.init(backendConfig());
 
-    try {
-      session = await ServerSession.getSession(context.req, context.res, {
-        overrideGlobalClaimValidators: () => {
-          return [];
-        },
-      });
-      // console.log("session inside try/catch: ", session);
-    } catch (err: any) {
-      // console.log("error in serverSideProps: ", err.type, " ", err.message);
-      if (err.type === ServerSession.Error.TRY_REFRESH_TOKEN) {
-        return { props: { fromSupertokens: "needs-refresh" } };
-      } else if (err.type === ServerSession.Error.UNAUTHORISED) {
-        return { props: { fromSupertokens: "needs-refresh" } };
-      }
+  let session: ServerSession.SessionContainer;
+
+  try {
+    session = await ServerSession.getSession(context.req, context.res, {
+      overrideGlobalClaimValidators: () => {
+        return [];
+      },
+    });
+    // console.log("session inside try/catch: ", session);
+  } catch (err: any) {
+    console.log("error in getServerSideProps: ", err.type, " ", err.message);
+    if (err.type === ServerSession.Error.TRY_REFRESH_TOKEN) {
+      return { props: { fromSupertokens: "needs-refresh" } };
+    } else if (err.type === ServerSession.Error.UNAUTHORISED) {
+      return { props: { fromSupertokens: "needs-refresh" } };
     }
-    authId = session!.getUserId();
-    userId = { authId: authId };
-  } else id = 1;
-  userId = { id: id };
+  }
+  authId = session!.getUserId();
+  userId = { authId: authId };
+  // console.log("userId from supertokens: ", userId);
+  // } else id = 1;
+  // userId = { id: id };
+  // console.log("userId, not logged in: ", userId);
 
   // const userId = 1;
 
   const data = await prisma.user.findUnique({
+    // where: {
+    //   authId: authId,
+    // },
     where: {
       ...userId,
     },

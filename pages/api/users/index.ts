@@ -16,6 +16,7 @@ export default async function user(req: any, res: any) {
     credentials: true,
     allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
   });
+  //   console.log("making request to supertokens: ", req);
 
   // we first verify the session
   await superTokensNextWrapper(

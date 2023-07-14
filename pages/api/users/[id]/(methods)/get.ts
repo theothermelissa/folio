@@ -19,6 +19,7 @@ export default async function get(
         projects: true,
       },
     });
+    // console.log("got user: ", user);
     response.status(200).json(user);
   } catch (error) {
     response.status(500).json({ error: error.message });
